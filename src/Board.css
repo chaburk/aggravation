@@ -1,0 +1,47 @@
+.board__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #524d4d;
+}
+
+.board {
+  position: relative;
+  width: 45%;
+  padding-bottom: 45%;
+  background-color: #8d8154;
+}
+
+.inner-board {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: red;
+}
+
+.inner-board-container {
+  display: grid;
+  grid-template-columns: repeat(15, 8px); /* Adjust columns as needed */
+  grid-template-rows: repeat(10, 1fr);
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.grid-item {
+  background-color: yellow;
+  padding: 10px;
+  border: 1px solid brown;
+  text-align: center;
+}
+
+.space {
+  background-color: #766a3f;
+}

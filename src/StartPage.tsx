@@ -11,6 +11,8 @@ const StartPage = () => {
       <div className="start__red start__marble"></div>
       <div className="start__blue start__marble"></div>
       <div className="start__grey start__marble"></div>
+      {/* <div className="btn">Begin</div>
+      <div className="btn">Rules</div> */}
     </div>
   );
 };

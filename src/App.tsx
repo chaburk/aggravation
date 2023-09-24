@@ -1,12 +1,13 @@
-import { useState } from "react";
 import StartPage from "./StartPage";
 import "./App.css";
+import Board from "./Board";
 
 function App() {
   return (
     <>
       <div>
-        <StartPage />
+        {/* <StartPage /> */}
+        <Board />
       </div>
     </>
   );
