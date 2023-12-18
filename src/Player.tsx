@@ -3,20 +3,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 interface PlayerProps {
-  colorBg: string;
+  playerColor: string;
+  playerName: string;
 }
 
-const Player: React.FC<PlayerProps> = ({ colorBg }) => {
+const Player: React.FC<PlayerProps> = ({ playerColor, playerName }) => {
   return (
-    <div className="player-outer">
-      <div className="player-container" style={{ backgroundColor: colorBg }}>
+    <div className="player-container">
+      <div className="player-inner" style={{ backgroundColor: playerColor }}>
         <FontAwesomeIcon
           icon={faUser}
           style={{ color: "#fff" }}
           className="player-icon"
         />
       </div>
-      <h1>Chase</h1>
+      <h1 className="player-name">{playerName}</h1>
     </div>
   );
 };

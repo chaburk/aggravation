@@ -1,4 +1,4 @@
-.player-outer {
+.player-container {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -6,7 +6,7 @@
   align-items: center;
 }
 
-.player-container {
+.player-inner {
   position: relative;
   background-color: blue;
   width: 100%;
@@ -23,7 +23,7 @@
   max-width: 40%;
 }
 
-h1 {
+.player-name {
   font-size: 150%;
   max-width: 100%;
   overflow: hidden;
@@ -32,7 +32,7 @@ h1 {
 }
 
 @media screen and (max-width: 1000px) {
-  h1 {
+  .player-name {
     font-size: 60%;
   }
 }
