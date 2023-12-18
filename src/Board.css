@@ -62,3 +62,25 @@
 .playerFour {
   background-color: yellow;
 }
+
+.player {
+  position: absolute;
+  width: 10%;
+}
+
+.top-left {
+  top: 0;
+  left: -15%;
+}
+.top-right {
+  top: 0;
+  right: -15%;
+}
+.bottom-left {
+  bottom: 0;
+  left: -15%;
+}
+.bottom-right {
+  bottom: 0;
+  right: -15%;
+}

@@ -1,5 +1,6 @@
 import "./Board.css";
 import Marble from "./Marble";
+import Player from "./Player";
 
 interface Space {
   id: number;
@@ -58,9 +59,20 @@ const Board = () => {
   return (
     <div className="board__container">
       <div className="board">
+        <div className="player top-left">
+          <Player color={"red"} />
+        </div>
+        <div className="player top-right">
+          <Player />
+        </div>
+        <div className="player bottom-left">
+          <Player />
+        </div>
+        <div className="player bottom-right">
+          <Player />
+        </div>
         <div className="inner-board">
           <div className="inner-board-container">{spaces}</div>
-          <Marble color={"blue"} />
         </div>
       </div>
     </div>
