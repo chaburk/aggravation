@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   height: 100vh;
   background-color: #524d4d;
 }
@@ -21,13 +20,12 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: red;
 }
 
 .inner-board-container {
   display: grid;
-  grid-template-columns: repeat(15, 8px); /* Adjust columns as needed */
-  grid-template-rows: repeat(10, 1fr);
+  grid-template-columns: repeat(15, 1fr); /* Adjust columns as needed */
+  grid-template-rows: repeat(15, 1fr);
   width: 100%;
   height: 100%;
   max-height: 100%;
@@ -36,12 +34,31 @@
 }
 
 .grid-item {
-  background-color: yellow;
-  padding: 10px;
-  border: 1px solid brown;
+  background-color: blue;
   text-align: center;
 }
 
 .space {
   background-color: #766a3f;
+  border-radius: 50%;
+}
+
+.hide {
+  background-color: transparent;
+}
+
+.playerOne {
+  background-color: #124098;
+}
+
+.playerTwo {
+  background-color: green;
+}
+
+.playerThree {
+  background-color: black;
+}
+
+.playerFour {
+  background-color: yellow;
 }
