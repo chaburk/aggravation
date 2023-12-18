@@ -1,0 +1,14 @@
+.die-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20%;
+  height: 200px;
+  background-color: red;
+  border-radius: 15px;
+}
+
+.number {
+  color: white;
+  text-align: center;
+}

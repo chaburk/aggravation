@@ -2,6 +2,7 @@ import StartPage from "./StartPage";
 import "./App.css";
 import Board from "./Board";
 import { useState } from "react";
+import Die from "./Die";
 
 function App() {
   const [start, setStart] = useState(true);
@@ -17,7 +18,8 @@ function App() {
           <StartPage startGame={startGame} />
         ) : (
           <>
-            <Board />
+            <Die />
+            {/* <Board /> */}
           </>
         )}
       </div>
