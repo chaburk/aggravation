@@ -47,26 +47,11 @@
 
 .board_hole {
   border-radius: 50%;
+  /* border: 2px solid #0dc3ec; */
 }
 
 .hide {
   background-color: transparent;
-}
-
-.playerOne {
-  background-color: #124098;
-}
-
-.playerTwo {
-  background-color: green;
-}
-
-.playerThree {
-  background-color: black;
-}
-
-.playerFour {
-  background-color: yellow;
 }
 
 .player {
@@ -89,4 +74,8 @@
 .bottom-right {
   bottom: 0;
   right: -15%;
+}
+
+.marble {
+  background-color: transparent;
 }
