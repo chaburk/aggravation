@@ -1,14 +1,18 @@
 import StartPage from "./StartPage";
 import "./App.css";
 import Board from "./Board";
+import { useState } from "react";
 
 function App() {
+  const [start, setStart] = useState(true);
+
+  const startGame = () => {
+    setStart((prevStart) => !prevStart);
+  };
+
   return (
     <>
-      <div>
-        {/* <StartPage /> */}
-        <Board />
-      </div>
+      <div>{start ? <StartPage startGame={startGame} /> : <Board />}</div>
     </>
   );
 }

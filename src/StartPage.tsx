@@ -1,7 +1,7 @@
 import "./StartPage.css";
 //use sass???
 //after today will change
-const StartPage = () => {
+const StartPage = ({ startGame }) => {
   return (
     <div className="start__container">
       <div className="start__blackMarble">
@@ -11,8 +11,10 @@ const StartPage = () => {
       <div className="start__red start__marble"></div>
       <div className="start__blue start__marble"></div>
       <div className="start__grey start__marble"></div>
-      {/* <div className="btn">Begin</div>
-      <div className="btn">Rules</div> */}
+      <div className="btn" onClick={startGame}>
+        Begin
+      </div>
+      <div className="btn">Rules</div>
     </div>
   );
 };
