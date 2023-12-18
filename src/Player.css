@@ -1,3 +1,11 @@
+.player-outer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
 .player-container {
   position: relative;
   background-color: blue;
@@ -13,4 +21,18 @@
   transform: translate(-50%, -50%);
   font-size: 850%;
   max-width: 40%;
+}
+
+h1 {
+  font-size: 150%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 1000px) {
+  h1 {
+    font-size: 60%;
+  }
 }

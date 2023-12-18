@@ -60,16 +60,16 @@ const Board = () => {
     <div className="board__container">
       <div className="board">
         <div className="player top-left">
-          <Player color={"red"} />
+          <Player colorBg={"red"} />
         </div>
         <div className="player top-right">
-          <Player />
+          <Player colorBg={"blue"} />
         </div>
         <div className="player bottom-left">
-          <Player />
+          <Player colorBg={"green"} />
         </div>
         <div className="player bottom-right">
-          <Player />
+          <Player colorBg={"purple"} />
         </div>
         <div className="inner-board">
           <div className="inner-board-container">{spaces}</div>

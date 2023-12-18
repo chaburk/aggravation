@@ -2,10 +2,14 @@ import "./Player.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ color }) => {
+interface PlayerProps {
+  colorBg: string;
+}
+
+const Player: React.FC<PlayerProps> = ({ colorBg }) => {
   return (
-    <>
-      <div className="player-container">
+    <div className="player-outer">
+      <div className="player-container" style={{ backgroundColor: colorBg }}>
         <FontAwesomeIcon
           icon={faUser}
           style={{ color: "#fff" }}
@@ -13,7 +17,7 @@ const Player = ({ color }) => {
         />
       </div>
       <h1>Chase</h1>
-    </>
+    </div>
   );
 };
 
