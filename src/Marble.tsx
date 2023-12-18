@@ -1,7 +1,16 @@
 import "./Marble.css";
 
-const Marble = (props) => {
-  return <div className="marble-container" style={props.color}></div>;
+interface MarbleProps {
+  marbleColor: string;
+}
+
+const Marble: React.FC<MarbleProps> = ({ marbleColor }) => {
+  return (
+    <div
+      className="marble-container"
+      style={{ backgroundColor: marbleColor }}
+    ></div>
+  );
 };
 
 export default Marble;
