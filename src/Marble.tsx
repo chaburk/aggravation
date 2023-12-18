@@ -1,7 +1,7 @@
-import React from "react";
+import "./Marble.css";
 
 const Marble = (props) => {
-  return <div>Marble</div>;
+  return <div className="marble-container" style={props.color}></div>;
 };
 
 export default Marble;

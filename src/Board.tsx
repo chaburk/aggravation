@@ -40,7 +40,8 @@ function createSpaces() {
       spaces.push(<div className={`space grid-item playerTwo`} key={i}></div>);
     } else if (playerThreeMarbles.includes(i)) {
       spaces.push(
-        <div className={`space grid-item playerThree`} key={i}></div>
+        <Marble />
+        // <div className={`space grid-item playerThree`} key={i}></div>
       );
     } else if (playerFourMarbles.includes(i)) {
       spaces.push(<div className={`space grid-item playerFour`} key={i}></div>);
