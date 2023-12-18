@@ -35,18 +35,32 @@ const playerFourMarbles: int = [224, 208, 192, 176, 160];
 function createSpaces() {
   for (let i = 0; i < 225; i++) {
     if (playerOneMarbles.includes(i)) {
-      spaces.push(<div className={`space grid-item playerOne`} key={i}></div>);
+      spaces.push(
+        <div className={`space grid-item playerOne`} key={i}>
+          <Marble marbleColor={"red"} />
+        </div>
+      );
     } else if (playerTwoMarbles.includes(i)) {
-      spaces.push(<div className={`space grid-item playerTwo`} key={i}></div>);
+      spaces.push(
+        <div className={`space grid-item playerTwo`} key={i}>
+          <Marble marbleColor={"blue"} />
+        </div>
+      );
     } else if (playerThreeMarbles.includes(i)) {
       spaces.push(
-        <Marble />
-        // <div className={`space grid-item playerThree`} key={i}></div>
+        //<Marble />
+        <div className={`space playerThree`} key={i}>
+          <Marble marbleColor={"green"} />
+        </div>
       );
     } else if (playerFourMarbles.includes(i)) {
-      spaces.push(<div className={`space grid-item playerFour`} key={i}></div>);
+      spaces.push(
+        <div className={`space playerFour`} key={i}>
+          <Marble marbleColor={"purple"} />
+        </div>
+      );
     } else if (spacesToKeep.includes(i)) {
-      spaces.push(<div className={`space grid-item`} key={i}></div>);
+      spaces.push(<div className={`space grid-item board_hole`} key={i}></div>);
     } else {
       spaces.push(<div className={`space grid-item hide`} key={i}></div>);
     }
@@ -61,16 +75,16 @@ const Board = () => {
     <div className="board__container">
       <div className="board">
         <div className="player top-left">
-          <Player colorBg={"red"} />
+          <Player playerColor={"red"} playerName={"Chase"} />
         </div>
         <div className="player top-right">
-          <Player colorBg={"blue"} />
+          <Player playerColor={"blue"} playerName={"Jordan"} />
         </div>
         <div className="player bottom-left">
-          <Player colorBg={"green"} />
+          <Player playerColor={"green"} playerName={"Taylor"} />
         </div>
         <div className="player bottom-right">
-          <Player colorBg={"purple"} />
+          <Player playerColor={"purple"} playerName={"Karen"} />
         </div>
         <div className="inner-board">
           <div className="inner-board-container">{spaces}</div>
