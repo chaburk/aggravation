@@ -6,7 +6,7 @@ const randomNum = () => {
 };
 
 const Die = () => {
-  const [roll, setRoll] = useState();
+  const [roll, setRoll] = useState(0);
   const diceRoll = () => {
     for (let i = 0; i < 10; i++) {
       setTimeout(() => {
