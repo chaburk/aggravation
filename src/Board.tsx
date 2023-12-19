@@ -69,25 +69,32 @@ function createSpaces() {
 }
 
 createSpaces();
-console.log(spacesToKeep.length);
 
-const Board = () => {
-  //Logic of the game will be in this file?
+const Board = ({ players }) => {
+  const numOfPlayers = Object.keys(players).length;
+  const playerPositions = [];
+  for (let i = 1; i <= numOfPlayers; i++) {
+    let position: string = "";
+    if (i === 1) {
+      position = "bottom-right";
+    } else if (i === 2) {
+      position = "top-left";
+    } else if (i === 3) {
+      position = "bottom-left";
+    } else if (i === 4) {
+      position = "top-right";
+    }
+    playerPositions.push(
+      <div className={`player ${position}`}>
+        <Player playerColor={players[i].color} playerName={players[i].name} />
+      </div>
+    );
+  }
+  console.log(playerPositions);
   return (
     <div className="board__container">
       <div className="board">
-        <div className="player top-left">
-          <Player playerColor={"red"} playerName={"Chase"} />
-        </div>
-        <div className="player top-right">
-          <Player playerColor={"blue"} playerName={"Jordan"} />
-        </div>
-        <div className="player bottom-left">
-          <Player playerColor={"green"} playerName={"Taylor"} />
-        </div>
-        <div className="player bottom-right">
-          <Player playerColor={"purple"} playerName={"Karen"} />
-        </div>
+        {playerPositions}
         <div className="inner-board">
           <div className="inner-board-container">{spaces}</div>
         </div>
