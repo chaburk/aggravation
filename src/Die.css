@@ -4,11 +4,80 @@
   justify-content: center;
   width: 15vw;
   height: 15vw;
-  background-color: red;
+  background-color: white;
   border-radius: 15px;
+  position: relative;
+  border: 1px solid black;
 }
 
-.number {
-  color: white;
-  text-align: center;
+.dice-dot {
+  position: absolute;
+  background-color: #000;
+  width: 20%; /* Adjust the size of each dot */
+  height: 20%; /* Adjust the size of each dot */
+  border-radius: 50%;
 }
+
+.dice-one,
+.dice-three:nth-child(3),
+.dice-five:nth-child(5) {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* .dice-two .dice-dot:nth-child(1) {
+  top: 25%;
+  left: 25%;
+  background-color: yellow;
+} */
+
+.dice-two:nth-child(1),
+.dice-three:nth-child(1),
+.dice-four:nth-child(1),
+.dice-five:nth-child(1),
+.dice-six:nth-child(1) {
+  top: 5%;
+  left: 5%;
+}
+
+.dice-two:nth-child(2),
+.dice-three:nth-child(2),
+.dice-four:nth-child(2),
+.dice-five:nth-child(2),
+.dice-six:nth-child(2) {
+  bottom: 5%;
+  right: 5%;
+}
+
+.dice-four:nth-child(3),
+.dice-five:nth-child(3),
+.dice-six:nth-child(3) {
+  bottom: 5%;
+  left: 5%;
+}
+
+.dice-four:nth-child(4),
+.dice-five:nth-child(4),
+.dice-six:nth-child(4) {
+  top: 5%;
+  right: 5%;
+}
+
+.dice-six:nth-child(5) {
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+}
+
+.dice-six:nth-child(6) {
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+}
+
+/* .dice-two .dice-dot:nth-child(2) {
+  top: 55%;
+  left: 55%;
+  background-color: green;
+} */
