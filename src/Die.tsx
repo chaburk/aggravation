@@ -9,7 +9,7 @@ const randomNum = () => {
   return Math.floor(Math.random() * 6) + 1;
 };
 
-const Die = () => {
+const Die = (props) => {
   const [dots, setDots] = useState([
     <div className={`dice-dot dice-one`} key={0}></div>,
   ]);
@@ -23,6 +23,7 @@ const Die = () => {
     "6": "dice-six",
   };
 
+  //could pass down a roll state that is updated after the click
   const diceRoll = () => {
     for (let i = 0; i < 10; i++) {
       setTimeout(() => {
@@ -39,6 +40,9 @@ const Die = () => {
           );
         }
         setDots(tempDot);
+        if (i === 9) {
+          props.getRoll(ranNum);
+        }
       }, i * 100);
     }
   };

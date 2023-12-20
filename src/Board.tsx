@@ -23,7 +23,22 @@ const spacesToKeep: number[] = [
   219,
 ];
 
-const board: number[] = [];
+const tempPlayer: number[] = [
+  215, 200, 185, 170, 155, 140, 139, 138, 137, 136, 135, 120, 105, 90, 75, 76,
+  77, 78, 79, 80, 65, 50, 35, 20, 5, 6, 7, 8, 9, 24, 39, 54, 69, 84, 85, 86, 87,
+  88, 89, 104, 119, 134, 149, 148, 147, 146, 145, 144, 159, 174, 189, 204, 219,
+  218, 217, 216,
+];
+
+//board for translation. each index refers to a space on the grid.
+// const board: number[] = [
+//   215, 200, 185, 170, 155, 140, 139, 138, 137, 136, 135, 120, 105, 90, 75, 76,
+//   77, 78, 79, 80, 65, 50, 35, 20, 5, 6, 7, 8, 9, 24, 39, 54, 69, 84, 85, 86, 87,
+//   88, 89, 104, 119, 134, 149, 148, 147, 146, 145, 144, 159, 174, 189, 204, 219,
+//   218, 217, 216,
+// ];
+// console.log(board.indexOf(7));
+
 //playerthreewin 105, 106, 107, 108, 109, 110,
 //playerfourwin 114, 115, 116, 117, 118, 119,
 
@@ -68,13 +83,31 @@ function createSpaces() {
   }
 }
 
+//need to pass in the players marbles / board and then call createSpaces to update board.
+//useeffect to update a board when something is passed
 createSpaces();
 
-const Board = ({ players }) => {
+const updateBoard = (gameBoard) => {
+  for (let i = 0; i < gameBoard.length; i++) {
+    if (gameBoard[i] !== 0) {
+      spaces[tempPlayer[i]] = (
+        <div className={`space marble possible-move`} key={i}>
+          <Marble marbleColor={"purple"} />
+        </div>
+      );
+    }
+  }
+};
+
+console.log(spaces.length);
+
+const Board = ({ players, board }) => {
   const numOfPlayers = Object.keys(players).length;
   const playerPositions = [];
+  updateBoard(board);
   for (let i = 1; i <= numOfPlayers; i++) {
     let position: string = "";
+    let active = players[i].active;
     if (i === 1) {
       position = "bottom-right";
     } else if (i === 2) {
@@ -85,12 +118,15 @@ const Board = ({ players }) => {
       position = "top-right";
     }
     playerPositions.push(
-      <div className={`player ${position}`}>
-        <Player playerColor={players[i].color} playerName={players[i].name} />
+      <div className={`player ${position} `}>
+        <Player
+          playerColor={players[i].color}
+          playerName={players[i].name}
+          active={active}
+        />
       </div>
     );
   }
-  console.log(playerPositions);
   return (
     <div className="board__container">
       <div className="board">
