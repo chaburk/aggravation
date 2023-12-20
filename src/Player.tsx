@@ -5,12 +5,16 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 interface PlayerProps {
   playerColor: string;
   playerName: string;
+  active: string;
 }
 
-const Player: React.FC<PlayerProps> = ({ playerColor, playerName }) => {
+const Player: React.FC<PlayerProps> = ({ playerColor, playerName, active }) => {
   return (
     <div className="player-container">
-      <div className="player-inner" style={{ backgroundColor: playerColor }}>
+      <div
+        className={`player-inner ${active ? "active" : ""}`}
+        style={{ backgroundColor: playerColor }}
+      >
         <FontAwesomeIcon
           icon={faUser}
           style={{ color: "#fff" }}
