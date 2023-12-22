@@ -13,12 +13,24 @@ can't pass your own marbles
 */
 
 const board = Array(56).fill(0);
+interface Player {
+  name: string;
+  color: string;
+  marbles: number[]; // Replace with the actual type of marbles array
+  start: number;
+  limit: number;
+  active: boolean;
+}
+
+interface Players {
+  [key: number]: Player;
+}
 
 function App() {
   //limit is the index that they can't go pass
   //change state to an array
   //problem with active person need useEffect
-  const [players, setPlayers] = useState({
+  const startPlayers: Players = {
     1: {
       name: "Chase",
       color: "red",
@@ -51,7 +63,9 @@ function App() {
       limit: 40,
       active: false,
     },
-  });
+  };
+
+  const [players, setPlayers] = useState(startPlayers);
 
   const [start, setStart] = useState(true);
   const [game, setGame] = useState();
@@ -74,7 +88,7 @@ function App() {
     setTurn((prevTurn) => (prevTurn % numOfPlayers) + 1);
   };
 
-  const getRoll = (roll) => {
+  const getRoll = (roll: number): void => {
     setRoll(roll);
   };
 
@@ -84,16 +98,17 @@ function App() {
   // }
 
   useEffect(() => {
-    if (players[turn].marbles.length === 0 && (roll === 1 || roll === 6)) {
+    const currentPlayer: Player = players[turn];
+    if (currentPlayer.marbles.length === 0 && (roll === 1 || roll === 6)) {
       console.log("happening");
-      console.log(players[turn].marbles);
-      board[players[turn].start] = turn;
-      players[turn].marbles.push(players[turn].start);
-    } else if (players[turn].marbles.length != 0) {
-      console.log(players[turn].marbles);
+      console.log(currentPlayer.marbles);
+      board[currentPlayer.start] = turn;
+      currentPlayer.marbles.push(currentPlayer.start);
+    } else if (currentPlayer.marbles.length != 0) {
+      console.log(currentPlayer.marbles);
       console.log("can move piece");
-      board[players[turn].start] = 0;
-      board[players[turn].start + roll] = turn;
+      board[currentPlayer.start] = 0;
+      board[currentPlayer.start + roll] = turn;
     }
   }, [roll]);
 
