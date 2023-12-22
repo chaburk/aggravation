@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./Board.css";
 import Marble from "./Marble";
 import Player from "./Player";
+import Die from "./Die";
 
 interface Space {
   id: number;
@@ -74,7 +75,7 @@ function createSpaces() {
   return spaces;
 }
 
-const Board = ({ players, board }) => {
+const Board = ({ players, board, getRoll, move, setMove }) => {
   const spacesInit = createSpaces();
   const [spaces, setSpaces] = useState(spacesInit);
 
@@ -82,7 +83,6 @@ const Board = ({ players, board }) => {
   const playerPositions = [];
 
   const updateBoard = (players, gameBoard: number[]) => {
-    console.log(players);
     const updatedSpaces = [...spaces];
     for (let i = 0; i < gameBoard.length; i++) {
       if (gameBoard[i] !== 0) {
@@ -128,6 +128,15 @@ const Board = ({ players, board }) => {
       <div className="board">
         {playerPositions}
         <div className="inner-board">
+          {move ? (
+            <div className="dice-and-button">
+              <Die getRoll={getRoll} />
+              <button>Roll</button>
+            </div>
+          ) : (
+            ""
+          )}
+
           <div className="inner-board-container">{spaces}</div>
         </div>
       </div>

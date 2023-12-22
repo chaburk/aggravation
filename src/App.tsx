@@ -69,6 +69,7 @@ function App() {
   const [start, setStart] = useState(true);
   const [turn, setTurn] = useState(1);
   const [roll, setRoll] = useState(0);
+  const [move, setMove] = useState(false);
   const startGame = () => {
     setStart((prevStart) => !prevStart);
   };
@@ -100,7 +101,14 @@ function App() {
   //function to set roll state and update board
   const getRoll = (roll: number): void => {
     setRoll(roll);
-    updateBoardBasedOnRoll();
+  };
+
+  const addMarbles = (current, location) => {
+    setPlayers((prevPlayers) => {
+      const newPlayers = { ...prevPlayers };
+      newPlayers[current].marbles.push(location);
+      return newPlayers;
+    });
   };
 
   const updateBoard = (location, who: number) => {
@@ -111,12 +119,16 @@ function App() {
     });
   };
 
+  const emptySpace = (location: number) => {
+    return board[location] === 0;
+  };
+
   //Primary game logic function
   const updateBoardBasedOnRoll = () => {
     const currentPlayer: Player = players[turn];
-    console.log("This is the players turn");
-    console.log(currentPlayer.name);
     //If current player has no marbles out and rolls a starting number
+    console.log("outside");
+    console.log(currentPlayer.marbles);
     if (currentPlayer.marbles.length === 0 && (roll === 1 || roll === 6)) {
       //If another marble is occupying the start square.
       if (
@@ -136,21 +148,56 @@ function App() {
         newBoard[currentPlayer.start] = turn;
         return newBoard;
       });
-      //need to change to update player state rather than directly
-      currentPlayer.marbles.push(currentPlayer.start);
+      addMarbles(turn, currentPlayer.start);
+      console.log(currentPlayer.marbles);
     }
     //If the player has marbles on the board
     else if (currentPlayer.marbles.length != 0) {
-      //need to add if 1 or 6 again
-
-      //need to update this with state rather than this
-      currentPlayer.marbles.push(currentPlayer.start + roll);
-      setBoard((prevBoard) => {
-        const newBoard = [...prevBoard];
-        newBoard[currentPlayer.start] = 0;
-        newBoard[currentPlayer.start + roll] = turn;
-        return newBoard;
-      });
+      if (currentPlayer.marbles.length < 5) {
+        if (roll === 1 || roll === 6) {
+          let bringOutMarble = false;
+          console.log("one or six");
+          if (emptySpace(currentPlayer.start)) {
+            //button to press
+            bringOutMarble = true;
+            if (bringOutMarble) {
+              addMarbles(turn, currentPlayer.start);
+            } else {
+              console.log("move marble");
+            }
+          } else {
+            console.log("move marble");
+          }
+        }
+        //if roll is not 1 or 6
+        else {
+          console.log("not one or six");
+          //wait for which marble to move
+          //then check if the space is empty or is a valid move
+          if (emptySpace(currentPlayer.marbles[0] + roll)) {
+            console.log("gets inside here");
+            //move marble
+            //each move to check if it is in the limit
+            setBoard((prevBoard) => {
+              const newBoard = [...prevBoard];
+              newBoard[currentPlayer.marbles[0]] = 0;
+              newBoard[currentPlayer.marbles[0] + roll] = turn;
+              return newBoard;
+            });
+          }
+          //if marbles next move is not empty then replace
+          else {
+            setBoard((prevBoard) => {
+              const newBoard = [...prevBoard];
+              newBoard[currentPlayer.marbles[0]] = 0;
+              newBoard[14 + roll] = turn;
+              return newBoard;
+            });
+          }
+        }
+      } else {
+        console.log("too many marbles");
+      }
     }
   };
 
@@ -162,12 +209,13 @@ function App() {
   //useEffect that updates player active state after each turn
   useEffect(() => {
     setPlayers((prevPlayers) => {
-      console.log(turn);
       const newPlayers = { ...prevPlayers };
       newPlayers[turn].active = true;
       return newPlayers;
     });
   }, [turn]);
+
+  //useEffect for any player update
 
   return (
     <>
@@ -176,8 +224,13 @@ function App() {
           <StartPage startGame={startGame} />
         ) : (
           <>
-            <Die getRoll={getRoll} />
-            <Board players={players} board={board} />
+            <Board
+              players={players}
+              board={board}
+              getRoll={getRoll}
+              move={move}
+              changeMove={setMove}
+            />
             <button
               onClick={() => {
                 setPlayers((prevPlayers) => {
