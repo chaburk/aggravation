@@ -75,7 +75,7 @@ function createSpaces() {
   return spaces;
 }
 
-const Board = ({ players, board, getRoll, move, setMove }) => {
+const Board = ({ players, board, getRoll, move, changeMove }) => {
   const spacesInit = createSpaces();
   const [spaces, setSpaces] = useState(spacesInit);
 
@@ -131,7 +131,7 @@ const Board = ({ players, board, getRoll, move, setMove }) => {
           {move ? (
             <div className="dice-and-button">
               <Die getRoll={getRoll} />
-              <button>Roll</button>
+              <button onClick={changeMove}>Roll</button>
             </div>
           ) : (
             ""

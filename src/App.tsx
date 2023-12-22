@@ -69,7 +69,7 @@ function App() {
   const [start, setStart] = useState(true);
   const [turn, setTurn] = useState(1);
   const [roll, setRoll] = useState(0);
-  const [move, setMove] = useState(false);
+  const [move, setMove] = useState(true);
   const startGame = () => {
     setStart((prevStart) => !prevStart);
   };
@@ -109,6 +109,10 @@ function App() {
       newPlayers[current].marbles.push(location);
       return newPlayers;
     });
+  };
+
+  const showDie = () => {
+    setMove((prevMove) => !prevMove);
   };
 
   const updateBoard = (location, who: number) => {
@@ -213,6 +217,7 @@ function App() {
       newPlayers[turn].active = true;
       return newPlayers;
     });
+    showDie();
   }, [turn]);
 
   //useEffect for any player update
@@ -229,7 +234,7 @@ function App() {
               board={board}
               getRoll={getRoll}
               move={move}
-              changeMove={setMove}
+              changeMove={showDie}
             />
             <button
               onClick={() => {
