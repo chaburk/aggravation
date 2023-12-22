@@ -12,11 +12,10 @@ check if a marble position is 112, if it is and then roll is a one can do that m
 can't pass your own marbles
 */
 
-const board = Array(56).fill(0);
 interface Player {
   name: string;
   color: string;
-  marbles: number[]; // Replace with the actual type of marbles array
+  marbles: number[];
   start: number;
   limit: number;
   active: boolean;
@@ -26,10 +25,10 @@ interface Players {
   [key: number]: Player;
 }
 
+const startBoard = Array(56).fill(0);
+
 function App() {
-  //limit is the index that they can't go pass
-  //change state to an array
-  //problem with active person need useEffect
+  //Limit is the last index they can go to before going to the winners array
   const startPlayers: Players = {
     1: {
       name: "Chase",
@@ -66,9 +65,8 @@ function App() {
   };
 
   const [players, setPlayers] = useState(startPlayers);
-
+  const [board, setBoard] = useState(startBoard);
   const [start, setStart] = useState(true);
-  const [game, setGame] = useState();
   const [turn, setTurn] = useState(1);
   const [roll, setRoll] = useState(0);
   const startGame = () => {
@@ -76,10 +74,21 @@ function App() {
   };
 
   const numOfPlayers = Object.keys(players).length;
-  console.log(board);
 
+  //function to remove marble on board.
+  const removeMarble = (whoToRemove: number, marbleToRemove: number) => {
+    //need to change to update player state rathen then directly access
+    setPlayers((prevPlayers) => {
+      const newPlayers = { ...prevPlayers };
+      const indexOfMarble =
+        newPlayers[whoToRemove].marbles.indexOf(marbleToRemove);
+      newPlayers[whoToRemove].marbles.splice(indexOfMarble, 1);
+      return newPlayers;
+    });
+  };
+
+  //function to update turn and active player
   const nextTurn = () => {
-    console.log(turn);
     setPlayers((prevPlayers) => {
       const newPlayers = { ...prevPlayers };
       newPlayers[turn].active = false;
@@ -88,30 +97,69 @@ function App() {
     setTurn((prevTurn) => (prevTurn % numOfPlayers) + 1);
   };
 
+  //function to set roll state and update board
   const getRoll = (roll: number): void => {
     setRoll(roll);
+    updateBoardBasedOnRoll();
   };
 
-  // console.log(players[turn]);
-  // if (players[turn].marbles === 0 && (roll === 1 || roll === 6)) {
-  //   board[players[turn].start] = turn;
-  // }
+  const updateBoard = (location, who: number) => {
+    setBoard((prevBoard) => {
+      const newBoard = [...prevBoard];
+      newBoard[location.start] = who;
+      return newBoard;
+    });
+  };
 
-  useEffect(() => {
+  //Primary game logic function
+  const updateBoardBasedOnRoll = () => {
     const currentPlayer: Player = players[turn];
+    console.log("This is the players turn");
+    console.log(currentPlayer.name);
+    //If current player has no marbles out and rolls a starting number
     if (currentPlayer.marbles.length === 0 && (roll === 1 || roll === 6)) {
-      console.log("happening");
-      console.log(currentPlayer.marbles);
-      board[currentPlayer.start] = turn;
+      //If another marble is occupying the start square.
+      if (
+        board[currentPlayer.start] != turn ||
+        board[currentPlayer.start] != 0
+      ) {
+        //get the player whose marble it is.
+        let playerToRemove = board[currentPlayer.start];
+        playerToRemove = 1;
+        const playerMarbleToRemove = currentPlayer.start;
+        removeMarble(playerToRemove, playerMarbleToRemove);
+      }
+      //function call to update board
+      //updateBoard(currentPlayer.start, turn);
+      setBoard((prevBoard) => {
+        const newBoard = [...prevBoard];
+        newBoard[currentPlayer.start] = turn;
+        return newBoard;
+      });
+      //need to change to update player state rather than directly
       currentPlayer.marbles.push(currentPlayer.start);
-    } else if (currentPlayer.marbles.length != 0) {
-      console.log(currentPlayer.marbles);
-      console.log("can move piece");
-      board[currentPlayer.start] = 0;
-      board[currentPlayer.start + roll] = turn;
     }
+    //If the player has marbles on the board
+    else if (currentPlayer.marbles.length != 0) {
+      //need to add if 1 or 6 again
+
+      //need to update this with state rather than this
+      currentPlayer.marbles.push(currentPlayer.start + roll);
+      setBoard((prevBoard) => {
+        const newBoard = [...prevBoard];
+        newBoard[currentPlayer.start] = 0;
+        newBoard[currentPlayer.start + roll] = turn;
+        return newBoard;
+      });
+    }
+  };
+
+  //useEffect that updates board after each roll
+  useEffect(() => {
+    updateBoardBasedOnRoll();
   }, [roll]);
 
+  //useEffect that updates player active state after each turn
   useEffect(() => {
     setPlayers((prevPlayers) => {
       console.log(turn);
@@ -121,10 +169,6 @@ function App() {
     });
   }, [turn]);
 
-  //need to have game state that contains the player information and gets updated.
-  //can contain location of marbles, how many marbles they have out, how many in the win area
-  //update a board
-  //board that is 56 space and contains 0's for empty spaces and then player number?
   return (
     <>
       <div>
