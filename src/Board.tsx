@@ -3,6 +3,7 @@ import "./Board.css";
 import Marble from "./Marble";
 import Player from "./Player";
 import Die from "./Die";
+import { Players } from "./types";
 
 //Array of spaces to keep for board layout
 const spacesToKeep: number[] = [
@@ -75,14 +76,28 @@ function createSpaces() {
   return spaces;
 }
 
-const Board = ({ players, board, getRoll, move, changeMove }) => {
+interface BoardProps {
+  players: Players;
+  board: number[];
+  getRollValue: () => void;
+  move: boolean;
+  changeMove: () => void;
+}
+
+const Board: React.FC<BoardProps> = ({
+  players,
+  board,
+  getRollValue,
+  move,
+  changeMove,
+}) => {
   const spacesInit = createSpaces();
   const [spaces, setSpaces] = useState(spacesInit);
 
   const numOfPlayers = Object.keys(players).length;
   const playerPositions = [];
 
-  const updateBoard = (players, gameBoard: number[]) => {
+  const updateBoard = (players: Players, gameBoard: number[]) => {
     const updatedSpaces = [...spaces];
     for (let i = 0; i < gameBoard.length; i++) {
       if (gameBoard[i] !== 0) {
@@ -132,7 +147,7 @@ const Board = ({ players, board, getRoll, move, changeMove }) => {
         <div className="inner-board">
           {move ? (
             <div className="dice-and-button">
-              <Die getRoll={getRoll} />
+              <Die getRoll={getRollValue} />
               <button onClick={changeMove}>Roll</button>
             </div>
           ) : (

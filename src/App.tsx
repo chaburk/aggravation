@@ -2,19 +2,7 @@ import StartPage from "./StartPage";
 import "./App.css";
 import Board from "./Board";
 import { useState, useEffect } from "react";
-
-interface Player {
-  name: string;
-  color: string;
-  marbles: number[];
-  start: number;
-  limit: number;
-  active: boolean;
-}
-
-interface Players {
-  [key: number]: Player;
-}
+import { Player, Players } from "./types";
 
 const startBoard = Array(56).fill(0);
 
@@ -93,7 +81,7 @@ function App() {
     setRoll(roll);
   };
 
-  const addMarbles = (current, location) => {
+  const addMarbles = (current: number, location: number) => {
     setPlayers((prevPlayers) => {
       const newPlayers = { ...prevPlayers };
       newPlayers[current].marbles.push(location);
@@ -102,11 +90,11 @@ function App() {
   };
 
   const showDie = () => {
-    //setMove(true);
-    setMove((prevMove) => !prevMove);
+    setMove(true);
+    //setMove((prevMove) => !prevMove);
   };
 
-  const updateBoard = (location, who: number) => {
+  const updateBoard = (location: number, who: number) => {
     setBoard((prevBoard) => {
       const newBoard = [...prevBoard];
       newBoard[players[turn].marbles[0]] = 1;
@@ -202,7 +190,8 @@ function App() {
             <Board
               players={players}
               board={board}
-              getRoll={getRoll}
+              //get rollvalue and passing isn't right but i can't focus
+              getRollValue={getRoll}
               move={move}
               changeMove={showDie}
             />

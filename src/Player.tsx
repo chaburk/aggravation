@@ -5,7 +5,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 interface PlayerProps {
   playerColor: string;
   playerName: string;
-  active: string;
+  active: boolean;
 }
 
 const Player: React.FC<PlayerProps> = ({ playerColor, playerName, active }) => {

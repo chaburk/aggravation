@@ -9,7 +9,11 @@ const randomNum = () => {
   return Math.floor(Math.random() * 6) + 1;
 };
 
-const Die = (props) => {
+interface DieProps {
+  getRoll: (arg0: number) => void;
+}
+
+const Die: React.FC<DieProps> = ({ getRoll }) => {
   const [dots, setDots] = useState([
     <div className={`dice-dot dice-one`} key={0}></div>,
   ]);
@@ -41,7 +45,7 @@ const Die = (props) => {
         }
         setDots(tempDot);
         if (i === 9) {
-          props.getRoll(ranNum);
+          getRoll(ranNum);
         }
       }, i * 100);
     }
