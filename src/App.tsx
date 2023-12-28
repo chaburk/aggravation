@@ -57,11 +57,20 @@ function App() {
 
   //function to remove marble on board.
   const removeMarble = (whoToRemove: number, marbleToRemove: number) => {
+    console.log(`We are removing a marble from player: ${whoToRemove}`);
+    console.log(`The marble we are removing is:  ${marbleToRemove}`);
+    console.log(
+      `The players to remove marbles: ${players[whoToRemove].marbles}`
+    );
     setPlayers((prevPlayers) => {
       const newPlayers = { ...prevPlayers };
       const indexOfMarble =
         newPlayers[whoToRemove].marbles.indexOf(marbleToRemove);
+      console.log(`The index in the players marbles is:  ${indexOfMarble}`);
       newPlayers[whoToRemove].marbles.splice(indexOfMarble, 1);
+      console.log(
+        `The new players marbles is:  ${newPlayers[whoToRemove].marbles}`
+      );
       return newPlayers;
     });
   };
@@ -90,21 +99,40 @@ function App() {
   };
 
   const showDie = () => {
-    setMove(true);
-    //setMove((prevMove) => !prevMove);
+    //setMove(true);
+    setMove((prevMove) => !prevMove);
   };
 
-  const updateBoard = (location: number, who: number) => {
+  const updateBoard = (
+    location: number,
+    who: number,
+    currentLocation: number
+  ) => {
     setBoard((prevBoard) => {
       const newBoard = [...prevBoard];
-      newBoard[players[turn].marbles[0]] = 1;
-      newBoard[location.start] = who;
+      //updates the board with the location of the first players marble
+      //will need to expand to all the marbles.
+      console.log(`current location is ${currentLocation}`);
+      console.log(`new location is ${location}`);
+      newBoard[currentLocation] = 0;
+      newBoard[location] = who;
+      //newBoard[players[turn].marbles[0]] = turn;
+      //newBoard[location.start] = who;
+      console.log(players[turn].marbles);
       return newBoard;
     });
   };
 
   const emptySpace = (location: number) => {
     return board[location] === 0;
+  };
+
+  const updateActive = (tOrF: boolean) => {
+    setPlayers((prevPlayers) => {
+      const newPlayers = { ...prevPlayers };
+      newPlayers[turn].active = tOrF;
+      return newPlayers;
+    });
   };
 
   //Primary game logic function
@@ -147,20 +175,22 @@ function App() {
         }
         //if roll is not 1 or 6
         else {
+          const currentLocation = currentPlayer.marbles[0];
+          const spacesToMove = currentPlayer.marbles[0] + roll;
           //wait for which marble to move
           //then check if the space is empty or is a valid move
           if (emptySpace(currentPlayer.marbles[0] + roll)) {
-            const currentLocation = currentPlayer.marbles[0];
-            updateBoard(currentPlayer.marbles[0] + roll - 1, turn);
+            updateBoard(spacesToMove, turn, currentLocation);
+            //updateBoard(spacesToMove, turn, );
             removeMarble(turn, currentLocation);
             addMarbles(turn, roll + currentLocation);
           }
           //if marbles next move is not empty then replace
           else {
-            const currentLocation = currentPlayer.marbles[0];
-            updateBoard(currentPlayer.marbles[0] + roll - 1, turn);
-            removeMarble(turn, currentLocation);
-
+            const personToRemove = board[currentPlayer.marbles[0] + roll];
+            console.log(personToRemove);
+            updateBoard(spacesToMove, turn);
+            removeMarble(personToRemove, currentLocation + roll);
             addMarbles(turn, roll + currentLocation);
           }
         }
@@ -172,11 +202,7 @@ function App() {
 
   //useEffect that updates player active state after each turn
   useEffect(() => {
-    setPlayers((prevPlayers) => {
-      const newPlayers = { ...prevPlayers };
-      newPlayers[turn].active = true;
-      return newPlayers;
-    });
+    updateActive(true);
     showDie();
   }, [turn]);
 
@@ -197,12 +223,7 @@ function App() {
             />
             <button
               onClick={() => {
-                setPlayers((prevPlayers) => {
-                  console.log(turn);
-                  const newPlayers = { ...prevPlayers };
-                  newPlayers[turn].active = false;
-                  return newPlayers;
-                });
+                updateActive(false);
                 nextTurn();
               }}
             >
