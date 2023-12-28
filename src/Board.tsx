@@ -4,12 +4,6 @@ import Marble from "./Marble";
 import Player from "./Player";
 import Die from "./Die";
 
-interface Space {
-  id: number;
-  type: "board" | "marble";
-  active: boolean;
-}
-
 //Array of spaces to keep for board layout
 const spacesToKeep: number[] = [
   5, 6, 7, 8, 9, 14, 16, 20, 22, 24, 28, 32, 35, 37, 39, 42, 48, 50, 52, 54, 56,
@@ -41,37 +35,43 @@ const playerFourWin: number[] = [114, 115, 116, 117, 118, 119];
 //function to initialize spaces array
 function createSpaces() {
   const spaces: React.ReactNode[] = [];
+
   for (let i = 0; i < 225; i++) {
     if (playerOneMarbles.includes(i)) {
       spaces.push(
-        <div className={`space marble`} key={i}>
+        <div className={`space marble`} key={`playerOne-${i}`}>
           <Marble marbleColor={"blue"} />
         </div>
       );
     } else if (playerTwoMarbles.includes(i)) {
       spaces.push(
-        <div className={`space marble`} key={i}>
+        <div className={`space marble`} key={`playerTwo-${i}`}>
           <Marble marbleColor={"purple"} />
         </div>
       );
     } else if (playerThreeMarbles.includes(i)) {
       spaces.push(
-        <div className={`space marble`} key={i}>
+        <div className={`space marble`} key={`playerThree-${i}`}>
           <Marble marbleColor={"green"} />
         </div>
       );
     } else if (playerFourMarbles.includes(i)) {
       spaces.push(
-        <div className={`space marble`} key={i}>
+        <div className={`space marble`} key={`playerFour-${i}`}>
           <Marble marbleColor={"red"} />
         </div>
       );
     } else if (spacesToKeep.includes(i)) {
-      spaces.push(<div className={`space grid-item board_hole`} key={i}></div>);
+      spaces.push(
+        <div className={`space grid-item board_hole`} key={`hole-${i}`}></div>
+      );
     } else {
-      spaces.push(<div className={`space grid-item hide`} key={i}></div>);
+      spaces.push(
+        <div className={`space grid-item hide`} key={`hide-${i}`}></div>
+      );
     }
   }
+
   return spaces;
 }
 
@@ -100,6 +100,8 @@ const Board = ({ players, board, getRoll, move, changeMove }) => {
   };
   useEffect(() => {
     updateBoard(players, board);
+    console.log("board rerender");
+    console.log(board);
   }, [board]);
   for (let i = 1; i <= numOfPlayers; i++) {
     let position: string = "";
@@ -114,7 +116,7 @@ const Board = ({ players, board, getRoll, move, changeMove }) => {
       position = "top-right";
     }
     playerPositions.push(
-      <div className={`player ${position} `}>
+      <div className={`player ${position}`} key={`player${i}`}>
         <Player
           playerColor={players[i].color}
           playerName={players[i].name}

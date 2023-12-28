@@ -1,16 +1,8 @@
 import StartPage from "./StartPage";
 import "./App.css";
 import Board from "./Board";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import Die from "./Die";
-
-//need to have an onclick on marble that when it's clicked it updates something
-/*
-If marbles = [], then must roll a 1 or 6. if 1 or 6 then check if anything is in the spot, then put marble out. 
-if marbles is not empty, calculate possible moves
-check if a marble position is 112, if it is and then roll is a one can do that move. 
-can't pass your own marbles
-*/
 
 interface Player {
   name: string;
@@ -78,7 +70,6 @@ function App() {
 
   //function to remove marble on board.
   const removeMarble = (whoToRemove: number, marbleToRemove: number) => {
-    //need to change to update player state rathen then directly access
     setPlayers((prevPlayers) => {
       const newPlayers = { ...prevPlayers };
       const indexOfMarble =
@@ -112,12 +103,14 @@ function App() {
   };
 
   const showDie = () => {
+    //setMove(true);
     setMove((prevMove) => !prevMove);
   };
 
   const updateBoard = (location, who: number) => {
     setBoard((prevBoard) => {
       const newBoard = [...prevBoard];
+      newBoard[players[turn].marbles[0]] = 1;
       newBoard[location.start] = who;
       return newBoard;
     });
@@ -126,6 +119,15 @@ function App() {
   const emptySpace = (location: number) => {
     return board[location] === 0;
   };
+
+  //roll is not getting updated each time. when it should be
+  const memoizedSetBoardCallback = useMemo(() => {
+    console.log("inside of memo");
+    return (board) => {
+      const currentPlayer = players[turn];
+      updateBoard(currentPlayer.marbles[0] + roll - 1, turn);
+    };
+  }, [roll, players, turn]);
 
   //Primary game logic function
   const updateBoardBasedOnRoll = () => {
@@ -147,11 +149,8 @@ function App() {
       }
       //function call to update board
       //updateBoard(currentPlayer.start, turn);
-      setBoard((prevBoard) => {
-        const newBoard = [...prevBoard];
-        newBoard[currentPlayer.start] = turn;
-        return newBoard;
-      });
+      console.log(`Roll while 1 or 6: ${roll}`);
+      updateBoard(currentPlayer.start, turn);
       addMarbles(turn, currentPlayer.start);
       console.log(currentPlayer.marbles);
     }
@@ -165,7 +164,8 @@ function App() {
             //button to press
             bringOutMarble = true;
             if (bringOutMarble) {
-              addMarbles(turn, currentPlayer.start);
+              console.log("add marbles");
+              //addMarbles(turn, currentPlayer.start);
             } else {
               console.log("move marble");
             }
@@ -176,27 +176,41 @@ function App() {
         //if roll is not 1 or 6
         else {
           console.log("not one or six");
+          console.log(`This is the roll ${roll}`);
           //wait for which marble to move
           //then check if the space is empty or is a valid move
           if (emptySpace(currentPlayer.marbles[0] + roll)) {
-            console.log("gets inside here");
+            console.log("Next space is empty");
+            const currentLocation = currentPlayer.marbles[0];
             //move marble
             //each move to check if it is in the limit
-            setBoard((prevBoard) => {
-              const newBoard = [...prevBoard];
-              newBoard[currentPlayer.marbles[0]] = 0;
-              newBoard[currentPlayer.marbles[0] + roll] = turn;
-              return newBoard;
-            });
+            //this section runs twice
+            memoizedSetBoardCallback(board);
+
+            console.log(`This is the roll after memo${roll}`);
+            console.log(board);
+            console.log(`This is the location to remove ${currentLocation}`);
+            removeMarble(turn, currentLocation);
+            console.log(
+              `This is the location to be placed ${roll + currentLocation}`
+            );
+            addMarbles(turn, roll + currentLocation);
           }
           //if marbles next move is not empty then replace
           else {
-            setBoard((prevBoard) => {
-              const newBoard = [...prevBoard];
-              newBoard[currentPlayer.marbles[0]] = 0;
-              newBoard[14 + roll] = turn;
-              return newBoard;
-            });
+            console.log("Next space is not empty");
+            const currentLocation = currentPlayer.marbles[0];
+            //move marble
+            //each move to check if it is in the limit
+            //this section runs twice
+            memoizedSetBoardCallback(board);
+            console.log(board);
+            console.log(`This is the location to remove ${currentLocation}`);
+            removeMarble(turn, currentLocation);
+            console.log(
+              `This is the location to be placed ${roll + currentLocation}`
+            );
+            addMarbles(turn, roll + currentLocation);
           }
         }
       } else {
@@ -204,11 +218,14 @@ function App() {
       }
     }
   };
+  //why did go from 5 to 9 and 14
+  //why does it sometimes do 10
+  //Is something wrong at start
 
-  //useEffect that updates board after each roll
-  useEffect(() => {
-    updateBoardBasedOnRoll();
-  }, [roll]);
+  // //useEffect that updates board after each roll
+  // useLayoutEffect(() => {
+  //   updateBoardBasedOnRoll();
+  // }, [roll]);
 
   //useEffect that updates player active state after each turn
   useEffect(() => {
@@ -248,6 +265,13 @@ function App() {
               }}
             >
               Next turn
+            </button>
+            <button
+              onClick={() => {
+                updateBoardBasedOnRoll();
+              }}
+            >
+              Update Board
             </button>
           </>
         )}
