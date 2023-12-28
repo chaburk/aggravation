@@ -1,8 +1,7 @@
 import StartPage from "./StartPage";
 import "./App.css";
 import Board from "./Board";
-import { useState, useEffect, useLayoutEffect, useMemo } from "react";
-import Die from "./Die";
+import { useState, useEffect } from "react";
 
 interface Player {
   name: string;
@@ -120,21 +119,10 @@ function App() {
     return board[location] === 0;
   };
 
-  //roll is not getting updated each time. when it should be
-  const memoizedSetBoardCallback = useMemo(() => {
-    console.log("inside of memo");
-    return (board) => {
-      const currentPlayer = players[turn];
-      updateBoard(currentPlayer.marbles[0] + roll - 1, turn);
-    };
-  }, [roll, players, turn]);
-
   //Primary game logic function
   const updateBoardBasedOnRoll = () => {
     const currentPlayer: Player = players[turn];
     //If current player has no marbles out and rolls a starting number
-    console.log("outside");
-    console.log(currentPlayer.marbles);
     if (currentPlayer.marbles.length === 0 && (roll === 1 || roll === 6)) {
       //If another marble is occupying the start square.
       if (
@@ -148,18 +136,14 @@ function App() {
         removeMarble(playerToRemove, playerMarbleToRemove);
       }
       //function call to update board
-      //updateBoard(currentPlayer.start, turn);
-      console.log(`Roll while 1 or 6: ${roll}`);
       updateBoard(currentPlayer.start, turn);
       addMarbles(turn, currentPlayer.start);
-      console.log(currentPlayer.marbles);
     }
     //If the player has marbles on the board
     else if (currentPlayer.marbles.length != 0) {
       if (currentPlayer.marbles.length < 5) {
         if (roll === 1 || roll === 6) {
           let bringOutMarble = false;
-          console.log("one or six");
           if (emptySpace(currentPlayer.start)) {
             //button to press
             bringOutMarble = true;
@@ -175,41 +159,20 @@ function App() {
         }
         //if roll is not 1 or 6
         else {
-          console.log("not one or six");
-          console.log(`This is the roll ${roll}`);
           //wait for which marble to move
           //then check if the space is empty or is a valid move
           if (emptySpace(currentPlayer.marbles[0] + roll)) {
-            console.log("Next space is empty");
             const currentLocation = currentPlayer.marbles[0];
-            //move marble
-            //each move to check if it is in the limit
-            //this section runs twice
-            memoizedSetBoardCallback(board);
-
-            console.log(`This is the roll after memo${roll}`);
-            console.log(board);
-            console.log(`This is the location to remove ${currentLocation}`);
+            updateBoard(currentPlayer.marbles[0] + roll - 1, turn);
             removeMarble(turn, currentLocation);
-            console.log(
-              `This is the location to be placed ${roll + currentLocation}`
-            );
             addMarbles(turn, roll + currentLocation);
           }
           //if marbles next move is not empty then replace
           else {
-            console.log("Next space is not empty");
             const currentLocation = currentPlayer.marbles[0];
-            //move marble
-            //each move to check if it is in the limit
-            //this section runs twice
-            memoizedSetBoardCallback(board);
-            console.log(board);
-            console.log(`This is the location to remove ${currentLocation}`);
+            updateBoard(currentPlayer.marbles[0] + roll - 1, turn);
             removeMarble(turn, currentLocation);
-            console.log(
-              `This is the location to be placed ${roll + currentLocation}`
-            );
+
             addMarbles(turn, roll + currentLocation);
           }
         }
@@ -218,14 +181,6 @@ function App() {
       }
     }
   };
-  //why did go from 5 to 9 and 14
-  //why does it sometimes do 10
-  //Is something wrong at start
-
-  // //useEffect that updates board after each roll
-  // useLayoutEffect(() => {
-  //   updateBoardBasedOnRoll();
-  // }, [roll]);
 
   //useEffect that updates player active state after each turn
   useEffect(() => {
@@ -236,8 +191,6 @@ function App() {
     });
     showDie();
   }, [turn]);
-
-  //useEffect for any player update
 
   return (
     <>
