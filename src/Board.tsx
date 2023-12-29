@@ -100,7 +100,8 @@ const Board: React.FC<BoardProps> = ({
   const updateBoard = (players: Players, gameBoard: number[]) => {
     const updatedSpaces = [...spaces];
     for (let i = 0; i < gameBoard.length; i++) {
-      if (gameBoard[i] !== 0) {
+      if (gameBoard[i] != 0) {
+        console.log(`Space ${i} should be new`);
         const playerToPlace = gameBoard[i];
         let color = "";
         color = players[playerToPlace].color;
@@ -109,11 +110,18 @@ const Board: React.FC<BoardProps> = ({
             <Marble marbleColor={color} />
           </div>
         );
+        //getting rid of the last marble now but the board is messed up
+      } else {
+        updatedSpaces[boardTranslation[i]] = (
+          <div className={`space grid-item board_hole`} key={`hole-${i}`}></div>
+        );
       }
     }
     setSpaces(updatedSpaces);
   };
   useEffect(() => {
+    console.log("before");
+    console.log(board);
     updateBoard(players, board);
     console.log("board rerender");
     console.log(board);

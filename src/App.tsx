@@ -55,7 +55,8 @@ function App() {
 
   const numOfPlayers = Object.keys(players).length;
 
-  //function to remove marble on board.
+  //function to remove marble from players array
+  //not involved with the actual board
   const removeMarble = (whoToRemove: number, marbleToRemove: number) => {
     console.log(`We are removing a marble from player: ${whoToRemove}`);
     console.log(`The marble we are removing is:  ${marbleToRemove}`);
