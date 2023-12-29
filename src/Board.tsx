@@ -40,7 +40,13 @@ function createSpaces() {
   for (let i = 0; i < 225; i++) {
     if (playerOneMarbles.includes(i)) {
       spaces.push(
-        <div className={`space marble`} key={`playerOne-${i}`}>
+        <div
+          className={`space marble`}
+          key={`playerOne-${i}`}
+          onClick={() => {
+            console.log(`marble ${i} clicked`);
+          }}
+        >
           <Marble marbleColor={"blue"} />
         </div>
       );
@@ -82,6 +88,7 @@ interface BoardProps {
   getRollValue: () => void;
   move: boolean;
   changeMove: () => void;
+  marbleToUpdate: () => void;
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -90,6 +97,7 @@ const Board: React.FC<BoardProps> = ({
   getRollValue,
   move,
   changeMove,
+  marbleToUpdate,
 }) => {
   const spacesInit = createSpaces();
   const [spaces, setSpaces] = useState(spacesInit);
@@ -97,23 +105,46 @@ const Board: React.FC<BoardProps> = ({
   const numOfPlayers = Object.keys(players).length;
   const playerPositions = [];
 
+  //do possible moves
   const updateBoard = (players: Players, gameBoard: number[]) => {
     const updatedSpaces = [...spaces];
+    const possibleMove = [];
     for (let i = 0; i < gameBoard.length; i++) {
       if (gameBoard[i] != 0) {
         console.log(`Space ${i} should be new`);
         const playerToPlace = gameBoard[i];
+        const playerMarbles = players[playerToPlace].marbles;
+        console.log(playerMarbles);
+        possibleMove.push(i + 2);
         let color = "";
         color = players[playerToPlace].color;
         updatedSpaces[boardTranslation[i]] = (
-          <div className={`space marble possible-move`} key={i}>
+          <div
+            className={`space marble`}
+            key={`${color}-${i}`}
+            onClick={() => {
+              console.log(`marble ${i} clicked`);
+              marbleToUpdate(i);
+            }}
+          >
             <Marble marbleColor={color} />
           </div>
         );
+        //why does it change the layout sometimes
         //getting rid of the last marble now but the board is messed up
+      } else if (possibleMove.includes(i)) {
+        updatedSpaces[boardTranslation[i]] = (
+          <div
+            className={`space grid-item board_hole possible-move`}
+            key={`hole-${i}`}
+          ></div>
+        );
       } else {
         updatedSpaces[boardTranslation[i]] = (
-          <div className={`space grid-item board_hole`} key={`hole-${i}`}></div>
+          <div
+            className={`space grid-item board_hole`}
+            key={`new-hole-${i}`}
+          ></div>
         );
       }
     }
@@ -125,6 +156,8 @@ const Board: React.FC<BoardProps> = ({
     updateBoard(players, board);
     console.log("board rerender");
     console.log(board);
+    console.log(spaces.length);
+    console.log(spaces);
   }, [board]);
   for (let i = 1; i <= numOfPlayers; i++) {
     let position: string = "";
