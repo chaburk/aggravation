@@ -112,7 +112,7 @@ const addPlayers = (players: Players, numOfPlayers: number) => {
 interface BoardProps {
   players: Players;
   board: number[];
-  getRollValue: () => void;
+  getRollValue: (roll: number) => void;
   move: boolean;
   changeMove: () => void;
   marbleToUpdate: (marbleId: number) => void;

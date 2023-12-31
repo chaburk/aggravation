@@ -257,7 +257,6 @@ function App() {
             <Board
               players={players}
               board={board}
-              //get rollvalue and passing isn't right but i can't focus
               getRollValue={getRoll}
               move={move}
               changeMove={showDie}
