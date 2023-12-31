@@ -105,6 +105,71 @@ const Board: React.FC<BoardProps> = ({
   const numOfPlayers = Object.keys(players).length;
   const playerPositions = [];
 
+  const updatePlayerMarbles = () => {
+    const updatedSpaces = [...spaces];
+    //will update base on how many marbles are in players and function will be to bring out a marble
+    for (let i = 0; i < 225; i++) {
+      if (playerOneMarbles.includes(i)) {
+        updatedSpaces[i] = (
+          <div
+            className={`space marble`}
+            key={`playerOne-${i}`}
+            onClick={() => {
+              console.log(`marble ${i} clicked`);
+              console.log("now has the move function");
+              changeMove();
+            }}
+          >
+            <Marble marbleColor={"blue"} />
+          </div>
+        );
+      } else if (playerTwoMarbles.includes(i)) {
+        updatedSpaces[i] = (
+          <div
+            className={`space marble`}
+            key={`playerOne-${i}`}
+            onClick={() => {
+              console.log(`marble ${i} clicked`);
+              console.log("now has the move function");
+              changeMove();
+            }}
+          >
+            <Marble marbleColor={"purple"} />
+          </div>
+        );
+      } else if (playerThreeMarbles.includes(i)) {
+        updatedSpaces[i] = (
+          <div
+            className={`space marble`}
+            key={`playerOne-${i}`}
+            onClick={() => {
+              console.log(`marble ${i} clicked`);
+              console.log("now has the move function");
+              changeMove();
+            }}
+          >
+            <Marble marbleColor={"green"} />
+          </div>
+        );
+      } else if (playerFourMarbles.includes(i)) {
+        updatedSpaces[i] = (
+          <div
+            className={`space marble`}
+            key={`playerOne-${i}`}
+            onClick={() => {
+              console.log(`marble ${i} clicked`);
+              console.log("now has the move function");
+              changeMove();
+            }}
+          >
+            <Marble marbleColor={"red"} />
+          </div>
+        );
+      }
+    }
+    setSpaces(updatedSpaces);
+  };
+
   //do possible moves
   const updateBoard = (players: Players, gameBoard: number[]) => {
     const updatedSpaces = [...spaces];
@@ -115,7 +180,7 @@ const Board: React.FC<BoardProps> = ({
         const playerToPlace = gameBoard[i];
         const playerMarbles = players[playerToPlace].marbles;
         console.log(playerMarbles);
-        possibleMove.push(i + 2);
+        possibleMove.push(i + 5);
         let color = "";
         color = players[playerToPlace].color;
         updatedSpaces[boardTranslation[i]] = (
@@ -151,14 +216,13 @@ const Board: React.FC<BoardProps> = ({
     setSpaces(updatedSpaces);
   };
   useEffect(() => {
-    console.log("before");
-    console.log(board);
     updateBoard(players, board);
-    console.log("board rerender");
-    console.log(board);
-    console.log(spaces.length);
-    console.log(spaces);
+    //updatePlayerMarbles();
   }, [board]);
+
+  useEffect(() => {
+    updatePlayerMarbles();
+  }, []);
   for (let i = 1; i <= numOfPlayers; i++) {
     let position: string = "";
     let active = players[i].active;
