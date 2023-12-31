@@ -82,6 +82,7 @@ function App() {
   //function to
   const bringOut = () => {
     setBringOutMarble((prevBring) => !prevBring);
+    setBringOutMarble(false);
   };
 
   //Function to update which player's turn
@@ -236,6 +237,8 @@ function App() {
       }
     }
   };
+
+  console.log(bringOutMarble);
 
   //useEffect that updates player active state after each turn
   useEffect(() => {

@@ -146,6 +146,8 @@ const Board: React.FC<BoardProps> = ({
             onClick={() => {
               console.log(`marble ${i} clicked`);
               takeOutMarble();
+              //what value should i put in these
+              marbleToUpdate(i);
             }}
           >
             <Marble marbleColor={"blue"} />
@@ -159,6 +161,8 @@ const Board: React.FC<BoardProps> = ({
             onClick={() => {
               console.log(`marble ${i} clicked`);
               takeOutMarble();
+              marbleToUpdate(i);
+              //will change bringout value to true
             }}
           >
             <Marble marbleColor={"purple"} />
@@ -172,6 +176,7 @@ const Board: React.FC<BoardProps> = ({
             onClick={() => {
               console.log(`marble ${i} clicked`);
               takeOutMarble();
+              marbleToUpdate(i);
             }}
           >
             <Marble marbleColor={"green"} />
@@ -185,6 +190,7 @@ const Board: React.FC<BoardProps> = ({
             onClick={() => {
               console.log(`marble ${i} clicked`);
               takeOutMarble();
+              marbleToUpdate(i);
             }}
           >
             <Marble marbleColor={"red"} />
