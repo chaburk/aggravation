@@ -25,13 +25,13 @@ const boardTranslation: number[] = [
 
 //marbles are not correct spots
 const playerOneMarbles: number[] = [0, 16, 32, 48, 64];
-const playerOneWin: number[] = [7, 23, 37, 52, 67, 82];
+//const playerOneWin: number[] = [7, 23, 37, 52, 67, 82];
 const playerTwoMarbles: number[] = [14, 28, 42, 56, 70];
-const playerTwoWin: number[] = [142, 157, 172, 187, 202, 217];
+//const playerTwoWin: number[] = [142, 157, 172, 187, 202, 217];
 const playerThreeMarbles: number[] = [210, 196, 182, 168, 154];
-const playerThreeWin: number[] = [105, 106, 107, 108, 109, 110];
+//const playerThreeWin: number[] = [105, 106, 107, 108, 109, 110];
 const playerFourMarbles: number[] = [224, 208, 192, 176, 160];
-const playerFourWin: number[] = [114, 115, 116, 117, 118, 119];
+//const playerFourWin: number[] = [114, 115, 116, 117, 118, 119];
 
 //function to initialize spaces array
 function createSpaces() {
@@ -82,13 +82,40 @@ function createSpaces() {
   return spaces;
 }
 
+const addPlayers = (players: Players, numOfPlayers: number) => {
+  const playerPositions = [];
+  for (let i = 1; i <= numOfPlayers; i++) {
+    let position: string = "";
+    let active = players[i].active;
+    if (i === 1) {
+      position = "bottom-right";
+    } else if (i === 2) {
+      position = "top-left";
+    } else if (i === 3) {
+      position = "bottom-left";
+    } else if (i === 4) {
+      position = "top-right";
+    }
+    playerPositions.push(
+      <div className={`player ${position}`} key={`player${i}`}>
+        <Player
+          playerColor={players[i].color}
+          playerName={players[i].name}
+          active={active}
+        />
+      </div>
+    );
+  }
+  return playerPositions;
+};
+
 interface BoardProps {
   players: Players;
   board: number[];
   getRollValue: () => void;
   move: boolean;
   changeMove: () => void;
-  marbleToUpdate: () => void;
+  marbleToUpdate: (marbleId: number) => void;
   takeOutMarble: () => void;
 }
 
@@ -105,7 +132,7 @@ const Board: React.FC<BoardProps> = ({
   const [spaces, setSpaces] = useState(spacesInit);
 
   const numOfPlayers = Object.keys(players).length;
-  const playerPositions = [];
+  const playerPositions = addPlayers(players, numOfPlayers);
 
   const updatePlayerMarbles = () => {
     const updatedSpaces = [...spaces];
@@ -171,7 +198,7 @@ const Board: React.FC<BoardProps> = ({
   //do possible moves
   const updateBoard = (players: Players, gameBoard: number[]) => {
     const updatedSpaces = [...spaces];
-    const possibleMove = [];
+    const possibleMove: number[] = [];
     for (let i = 0; i < gameBoard.length; i++) {
       if (gameBoard[i] != 0) {
         console.log(`Space ${i} should be new`);
@@ -215,34 +242,12 @@ const Board: React.FC<BoardProps> = ({
   };
   useEffect(() => {
     updateBoard(players, board);
-    //updatePlayerMarbles();
   }, [board]);
 
   useEffect(() => {
     updatePlayerMarbles();
   }, []);
-  for (let i = 1; i <= numOfPlayers; i++) {
-    let position: string = "";
-    let active = players[i].active;
-    if (i === 1) {
-      position = "bottom-right";
-    } else if (i === 2) {
-      position = "top-left";
-    } else if (i === 3) {
-      position = "bottom-left";
-    } else if (i === 4) {
-      position = "top-right";
-    }
-    playerPositions.push(
-      <div className={`player ${position}`} key={`player${i}`}>
-        <Player
-          playerColor={players[i].color}
-          playerName={players[i].name}
-          active={active}
-        />
-      </div>
-    );
-  }
+
   return (
     <div className="board__container">
       <div className="board">
