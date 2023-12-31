@@ -89,6 +89,7 @@ interface BoardProps {
   move: boolean;
   changeMove: () => void;
   marbleToUpdate: () => void;
+  takeOutMarble: () => void;
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -98,6 +99,7 @@ const Board: React.FC<BoardProps> = ({
   move,
   changeMove,
   marbleToUpdate,
+  takeOutMarble,
 }) => {
   const spacesInit = createSpaces();
   const [spaces, setSpaces] = useState(spacesInit);
@@ -116,8 +118,7 @@ const Board: React.FC<BoardProps> = ({
             key={`playerOne-${i}`}
             onClick={() => {
               console.log(`marble ${i} clicked`);
-              console.log("now has the move function");
-              changeMove();
+              takeOutMarble();
             }}
           >
             <Marble marbleColor={"blue"} />
@@ -130,8 +131,7 @@ const Board: React.FC<BoardProps> = ({
             key={`playerOne-${i}`}
             onClick={() => {
               console.log(`marble ${i} clicked`);
-              console.log("now has the move function");
-              changeMove();
+              takeOutMarble();
             }}
           >
             <Marble marbleColor={"purple"} />
@@ -144,8 +144,7 @@ const Board: React.FC<BoardProps> = ({
             key={`playerOne-${i}`}
             onClick={() => {
               console.log(`marble ${i} clicked`);
-              console.log("now has the move function");
-              changeMove();
+              takeOutMarble();
             }}
           >
             <Marble marbleColor={"green"} />
@@ -158,8 +157,7 @@ const Board: React.FC<BoardProps> = ({
             key={`playerOne-${i}`}
             onClick={() => {
               console.log(`marble ${i} clicked`);
-              console.log("now has the move function");
-              changeMove();
+              takeOutMarble();
             }}
           >
             <Marble marbleColor={"red"} />
