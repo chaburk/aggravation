@@ -90,6 +90,7 @@ function App() {
   //Function to update which player's turn
   const nextTurn = () => {
     //Doesn't switch switch turn if player rolled a six
+    //if you get multiple sixes in a roll it doesn't reload
     if (roll != 6) {
       setPlayers((prevPlayers) => {
         const newPlayers = { ...prevPlayers };
