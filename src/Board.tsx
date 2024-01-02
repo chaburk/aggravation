@@ -7,12 +7,12 @@ import { Players } from "./types";
 
 //Array of spaces to keep for board layout
 const spacesToKeep: number[] = [
-  5, 6, 7, 8, 9, 14, 16, 20, 22, 24, 28, 32, 35, 37, 39, 42, 48, 50, 52, 54, 56,
-  64, 65, 67, 69, 70, 75, 76, 77, 78, 79, 80, 82, 84, 85, 86, 87, 88, 89, 90,
-  104, 105, 106, 107, 108, 109, 110, 114, 115, 116, 117, 118, 119, 120, 112,
+  0, 5, 6, 7, 8, 9, 14, 16, 20, 22, 24, 28, 32, 35, 37, 39, 42, 48, 50, 52, 54,
+  56, 64, 65, 67, 69, 70, 75, 76, 77, 78, 79, 80, 82, 84, 85, 86, 87, 88, 89,
+  90, 104, 105, 106, 107, 108, 109, 110, 114, 115, 116, 117, 118, 119, 120, 112,
   134, 135, 136, 137, 138, 139, 140, 142, 144, 145, 146, 147, 148, 149, 155,
   157, 159, 170, 172, 174, 185, 187, 189, 200, 202, 204, 215, 216, 217, 218,
-  219,
+  219, 224,
 ];
 
 //board for translation. each index refers to a space on the grid.
@@ -23,52 +23,27 @@ const boardTranslation: number[] = [
   218, 217, 216,
 ];
 
-//marbles are not correct spots
-const playerOneMarbles: number[] = [0, 16, 32, 48, 64];
-//const playerOneWin: number[] = [7, 23, 37, 52, 67, 82];
-const playerTwoMarbles: number[] = [14, 28, 42, 56, 70];
-//const playerTwoWin: number[] = [142, 157, 172, 187, 202, 217];
-const playerThreeMarbles: number[] = [210, 196, 182, 168, 154];
-//const playerThreeWin: number[] = [105, 106, 107, 108, 109, 110];
-const playerFourMarbles: number[] = [224, 208, 192, 176, 160];
-//const playerFourWin: number[] = [114, 115, 116, 117, 118, 119];
+const playerMarblesSpaces = [
+  [224, 208, 192, 176, 160],
+  [0, 16, 32, 48, 64],
+  [210, 196, 182, 168, 154],
+  [14, 28, 42, 56, 70],
+];
+// //marbles are not correct spots
+// const playerOneMarbles: number[] = [0, 16, 32, 48, 64];
+// //const playerOneWin: number[] = [7, 23, 37, 52, 67, 82];
+// const playerTwoMarbles: number[] = [14, 28, 42, 56, 70];
+// //const playerTwoWin: number[] = [142, 157, 172, 187, 202, 217];
+// const playerThreeMarbles: number[] = [210, 196, 182, 168, 154];
+// //const playerThreeWin: number[] = [105, 106, 107, 108, 109, 110];
+// const playerFourMarbles: number[] = [224, 208, 192, 176, 160];
+// //const playerFourWin: number[] = [114, 115, 116, 117, 118, 119];
 
 //function to initialize spaces array
 function createSpaces() {
   const spaces: React.ReactNode[] = [];
-
   for (let i = 0; i < 225; i++) {
-    if (playerOneMarbles.includes(i)) {
-      spaces.push(
-        <div
-          className={`space marble`}
-          key={`playerOne-${i}`}
-          onClick={() => {
-            console.log(`marble ${i} clicked`);
-          }}
-        >
-          <Marble marbleColor={"blue"} />
-        </div>
-      );
-    } else if (playerTwoMarbles.includes(i)) {
-      spaces.push(
-        <div className={`space marble`} key={`playerTwo-${i}`}>
-          <Marble marbleColor={"purple"} />
-        </div>
-      );
-    } else if (playerThreeMarbles.includes(i)) {
-      spaces.push(
-        <div className={`space marble`} key={`playerThree-${i}`}>
-          <Marble marbleColor={"green"} />
-        </div>
-      );
-    } else if (playerFourMarbles.includes(i)) {
-      spaces.push(
-        <div className={`space marble`} key={`playerFour-${i}`}>
-          <Marble marbleColor={"red"} />
-        </div>
-      );
-    } else if (spacesToKeep.includes(i)) {
+    if (spacesToKeep.includes(i)) {
       spaces.push(
         <div className={`space grid-item board_hole`} key={`hole-${i}`}></div>
       );
@@ -114,7 +89,6 @@ interface BoardProps {
   board: number[];
   getRollValue: (roll: number) => void;
   move: boolean;
-  changeMove: () => void;
   marbleToUpdate: (marbleId: number) => void;
   takeOutMarble: () => void;
 }
@@ -124,7 +98,6 @@ const Board: React.FC<BoardProps> = ({
   board,
   getRollValue,
   move,
-  changeMove,
   marbleToUpdate,
   takeOutMarble,
 }) => {
@@ -136,68 +109,32 @@ const Board: React.FC<BoardProps> = ({
 
   const updatePlayerMarbles = () => {
     const updatedSpaces = [...spaces];
-    //will update base on how many marbles are in players and function will be to bring out a marble
-    for (let i = 0; i < 225; i++) {
-      if (playerOneMarbles.includes(i)) {
-        updatedSpaces[i] = (
+    playerMarblesSpaces.forEach((marbleArray, playerIndex) => {
+      const playerAmount = players[playerIndex + 1].marbles.length;
+      marbleArray.slice(0, 5 - playerAmount).forEach((element) => {
+        updatedSpaces[element] = (
           <div
             className={`space marble`}
-            key={`playerOne-${i}`}
+            key={`player${playerIndex}-${element}`}
             onClick={() => {
-              console.log(`marble ${i} clicked`);
               takeOutMarble();
-              //what value should i put in these
-              marbleToUpdate(i);
+              marbleToUpdate(element);
             }}
           >
-            <Marble marbleColor={"blue"} />
+            <Marble marbleColor={players[playerIndex + 1].color} />
           </div>
         );
-      } else if (playerTwoMarbles.includes(i)) {
-        updatedSpaces[i] = (
+      });
+      marbleArray.slice(5 - playerAmount).forEach((element) => {
+        updatedSpaces[element] = (
           <div
-            className={`space marble`}
-            key={`playerOne-${i}`}
-            onClick={() => {
-              console.log(`marble ${i} clicked`);
-              takeOutMarble();
-              marbleToUpdate(i);
-              //will change bringout value to true
-            }}
-          >
-            <Marble marbleColor={"purple"} />
-          </div>
+            className={`space grid-item board_hole`}
+            key={`new-hole-${element}`}
+          ></div>
         );
-      } else if (playerThreeMarbles.includes(i)) {
-        updatedSpaces[i] = (
-          <div
-            className={`space marble`}
-            key={`playerOne-${i}`}
-            onClick={() => {
-              console.log(`marble ${i} clicked`);
-              takeOutMarble();
-              marbleToUpdate(i);
-            }}
-          >
-            <Marble marbleColor={"green"} />
-          </div>
-        );
-      } else if (playerFourMarbles.includes(i)) {
-        updatedSpaces[i] = (
-          <div
-            className={`space marble`}
-            key={`playerOne-${i}`}
-            onClick={() => {
-              console.log(`marble ${i} clicked`);
-              takeOutMarble();
-              marbleToUpdate(i);
-            }}
-          >
-            <Marble marbleColor={"red"} />
-          </div>
-        );
-      }
-    }
+      });
+    });
+
     setSpaces(updatedSpaces);
   };
 
@@ -262,7 +199,6 @@ const Board: React.FC<BoardProps> = ({
           {move ? (
             <div className="dice-and-button">
               <Die getRoll={getRollValue} />
-              <button onClick={changeMove}>Roll</button>
             </div>
           ) : (
             ""
