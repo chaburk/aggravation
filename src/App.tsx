@@ -51,6 +51,7 @@ function App() {
   const [move, setMove] = useState(true); //move is used to make die disappear
   const [marble, setMarble] = useState(-1); //marble is used to keep track of marble to move
   const [bringOutMarble, setBringOutMarble] = useState(false); //bringOutMarble is used to switch between moving and placing for 1/6 rolls
+  const [rollTrigger, setRollTrigger] = useState(0);
 
   const numOfPlayers = Object.keys(players).length; //numOfPlayers is used to keep track of how many players
 
@@ -62,6 +63,7 @@ function App() {
   //Function to update roll
   const getRoll = (roll: number): void => {
     setRoll(roll);
+    setRollTrigger((prev) => prev + 1);
   };
 
   //Function to remove Die from screen
@@ -82,17 +84,23 @@ function App() {
   //function to
   const bringOut = () => {
     setBringOutMarble((prevBring) => !prevBring);
-    setBringOutMarble(false);
+    //setBringOutMarble(true);
   };
 
   //Function to update which player's turn
   const nextTurn = () => {
-    setPlayers((prevPlayers) => {
-      const newPlayers = { ...prevPlayers };
-      newPlayers[turn].active = false;
-      return newPlayers;
-    });
-    setTurn((prevTurn) => (prevTurn % numOfPlayers) + 1);
+    //Doesn't switch switch turn if player rolled a six
+    if (roll != 6) {
+      setPlayers((prevPlayers) => {
+        const newPlayers = { ...prevPlayers };
+        newPlayers[turn].active = false;
+        return newPlayers;
+      });
+      setTurn((prevTurn) => (prevTurn % numOfPlayers) + 1);
+    } else {
+      setTurn(turn);
+      showDie();
+    }
   };
 
   //Function to update player's active value
@@ -163,6 +171,11 @@ function App() {
   };
 
   //Function to control primary game logic
+  //need to go middle logic and limits
+  //need to make sure they can't move again if another space is occupying square
+  //problem with showing the die after moves
+  //can't click older marbles for some reason
+  //can't switch between putting one out or in
   const updateBoardBasedOnMarble = () => {
     const currentPlayer: Player = players[turn];
     const activeMarbles = currentPlayer.marbles.length;
@@ -177,9 +190,18 @@ function App() {
         //need to check if this is removing the marble from the other player's array
         removeMarbleFromPlayer(playerToRemove, playerMarbleToRemove);
       }
+      //if they already have a marble there then can't do that.
       //function call to update board
       updateBoard(currentPlayer.start, turn, currentPlayer.start);
       addMarbleToPlayer(turn, currentPlayer.start);
+      nextTurn();
+      bringOut();
+      console.log(bringOutMarble);
+    }
+    //If current player has no marbles out but doesn't roll a starting number
+    else if (activeMarbles == 0 && roll != 0) {
+      alert("Player has no legal move");
+      nextTurn();
     }
     //If the player has marbles on the board
     else if (currentPlayer.marbles.length != 0) {
@@ -196,6 +218,8 @@ function App() {
             }
             addMarbleToPlayer(turn, currentPlayer.start);
             updateMarble(-1);
+            bringOut();
+            console.log(bringOutMarble);
           }
           //If a player rolls a 1 or 6 and wants to use roll to move another marble
           else {
@@ -232,19 +256,30 @@ function App() {
             elseUpdate(spacesToMove, currentLocation, personToRemove);
           }
         }
+        nextTurn();
       } else {
         console.log("too many marbles");
       }
     }
   };
 
-  console.log(bringOutMarble);
-
   //useEffect that updates player active state after each turn
   useEffect(() => {
     updateActive(true);
     showDie();
   }, [turn]);
+
+  useEffect(() => {
+    //need to change the location of the die or make smaller
+    if (roll != -1) {
+      setTimeout(() => {
+        showDie();
+        //sets the roll to -1 but need to keep the value
+        //it doesn't update otherwise
+        // getRoll(-1);
+      }, 1000);
+    }
+  }, [roll, rollTrigger]);
 
   //useEffect that updates board based on clicked marble
   useEffect(() => {
@@ -262,32 +297,9 @@ function App() {
               board={board}
               getRollValue={getRoll}
               move={move}
-              changeMove={showDie}
               marbleToUpdate={updateMarble}
               takeOutMarble={bringOut}
             />
-            <button
-              onClick={() => {
-                updateActive(false);
-                nextTurn();
-              }}
-            >
-              Next turn
-            </button>
-            <button
-              onClick={() => {
-                updateBoardBasedOnMarble();
-              }}
-            >
-              Update Board
-            </button>
-            <button
-              onClick={() => {
-                bringOut();
-              }}
-            >
-              change bring out
-            </button>
           </>
         )}
       </div>
