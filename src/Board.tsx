@@ -29,15 +29,6 @@ const playerMarblesSpaces = [
   [210, 196, 182, 168, 154],
   [14, 28, 42, 56, 70],
 ];
-// //marbles are not correct spots
-// const playerOneMarbles: number[] = [0, 16, 32, 48, 64];
-// //const playerOneWin: number[] = [7, 23, 37, 52, 67, 82];
-// const playerTwoMarbles: number[] = [14, 28, 42, 56, 70];
-// //const playerTwoWin: number[] = [142, 157, 172, 187, 202, 217];
-// const playerThreeMarbles: number[] = [210, 196, 182, 168, 154];
-// //const playerThreeWin: number[] = [105, 106, 107, 108, 109, 110];
-// const playerFourMarbles: number[] = [224, 208, 192, 176, 160];
-// //const playerFourWin: number[] = [114, 115, 116, 117, 118, 119];
 
 //function to initialize spaces array
 function createSpaces() {
@@ -134,17 +125,17 @@ const Board: React.FC<BoardProps> = ({
         );
       });
     });
-
-    setSpaces(updatedSpaces);
+    console.log(updatedSpaces);
+    return updatedSpaces;
   };
 
   //do possible moves
   const updateBoard = (players: Players, gameBoard: number[]) => {
-    const updatedSpaces = [...spaces];
+    console.log(players);
+    const updatedSpaces = updatePlayerMarbles();
     const possibleMove: number[] = [];
     for (let i = 0; i < gameBoard.length; i++) {
       if (gameBoard[i] != 0) {
-        console.log(`Space ${i} should be new`);
         const playerToPlace = gameBoard[i];
         const playerMarbles = players[playerToPlace].marbles;
         console.log(playerMarbles);
@@ -183,13 +174,15 @@ const Board: React.FC<BoardProps> = ({
     }
     setSpaces(updatedSpaces);
   };
-  useEffect(() => {
-    updateBoard(players, board);
-  }, [board]);
 
   useEffect(() => {
+    console.log("updatePlayer is called");
     updatePlayerMarbles();
   }, []);
+  useEffect(() => {
+    console.log("updateBoard is called");
+    updateBoard(players, board);
+  }, [board]);
 
   return (
     <div className="board__container">
