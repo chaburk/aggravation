@@ -135,11 +135,10 @@ const Board: React.FC<BoardProps> = ({
     const possibleMove: number[] = [];
     for (let i = 0; i <= 55; i++) {
       if (gameBoard[i] != 0) {
-        console.log(`i: ${i}`);
         const playerToPlace = gameBoard[i];
-        console.log(playerToPlace);
-        const playerMarbles = players[playerToPlace].marbles;
-        console.log(playerMarbles);
+        // const playerMarbles = players[playerToPlace].marbles;
+        // console.log("is this where the 5 is coming from");
+        // console.log("hello", playerMarbles);
         possibleMove.push(i + 5);
         let color = "";
         color = players[playerToPlace].color;
@@ -161,7 +160,7 @@ const Board: React.FC<BoardProps> = ({
         updatedSpaces[boardTranslation[i]] = (
           <div
             className={`space grid-item board_hole possible-move`}
-            key={`hole-${i}`}
+            key={`holecow-${i}`}
           ></div>
         );
       } else {

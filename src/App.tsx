@@ -51,6 +51,7 @@ function App() {
   const [move, setMove] = useState(true); //move is used to make die disappear
   const [marble, setMarble] = useState(-1); //marble is used to keep track of marble to move
   const [bringOutMarble, setBringOutMarble] = useState(false); //bringOutMarble is used to switch between moving and placing for 1/6 rolls
+
   const [rollTrigger, setRollTrigger] = useState(0);
 
   const numOfPlayers = Object.keys(players).length; //numOfPlayers is used to keep track of how many players
@@ -113,8 +114,21 @@ function App() {
     });
   };
 
+  const validMove = () => {
+    //check each space before it, and if there is no other marbles, then you can move.
+  };
+
+  const firstRow = () => {
+    //function to check if middle logic could apply.
+    //I don't know how to have people put it in the middle yet.
+  };
+
+  const moveOutOfMiddle = () => {
+    //function to check if the player can move out of the middle.
+  };
+
   //Function to remove a marble from player's array (Not involved with the board)
-  //does it make sense for each one tho.
+  //think i need another removeMarble?
   const removeMarbleFromPlayer = (
     whoToRemove: number,
     marbleToRemove: number
@@ -123,12 +137,24 @@ function App() {
     if (marbleToRemove > 55) {
       marbleToRemove = marbleToRemove % 56;
     }
-
+    //how did we get 5?
+    console.log(
+      `We are replacing player ${turn} marble ${players[turn].marbles}`
+    );
+    console.log(`This is the marbleToRemove: ${marbleToRemove}`);
+    console.log(`This is the current marble:  ${marble}`);
     setPlayers((prevPlayers) => {
       const newPlayers = { ...prevPlayers };
       const indexOfMarble =
         newPlayers[whoToRemove].marbles.indexOf(marbleToRemove);
       newPlayers[whoToRemove].marbles.splice(indexOfMarble, 1);
+      return newPlayers;
+    });
+  };
+
+  const replacePlayerMarble = () => {
+    setPlayers((prevPlayers) => {
+      const newPlayers = { ...prevPlayers };
       const indexOfMarbleForcurrent = newPlayers[turn].marbles.indexOf(marble);
       newPlayers[turn].marbles.splice(indexOfMarbleForcurrent, 1);
       return newPlayers;
@@ -136,16 +162,21 @@ function App() {
   };
 
   //Function to add a marble from player's array (Not involved with the board)
+  //getting a random 5
+  //Check if it is overflow or over the limit.
   const addMarbleToPlayer = (current: number, location: number) => {
     if (current > 55) {
       current = current % 56;
     }
+    console.log(players[current].limit);
     setPlayers((prevPlayers) => {
+      console.log("adding marble function");
       const newPlayers = { ...prevPlayers };
       if (newPlayers[current].marbles.includes(location)) {
       } else {
         newPlayers[current].marbles.push(location);
       }
+      console.log(newPlayers[current].marbles);
       return newPlayers;
     });
   };
@@ -160,6 +191,9 @@ function App() {
       newLocation = newLocation % 56;
       locationToRemove = locationToRemove % 56;
     }
+    if (newLocation > players[who].limit) {
+      console.log("Winners grid baby");
+    }
     setBoard((prevBoard) => {
       const newBoard = [...prevBoard];
       newBoard[locationToRemove] = 0;
@@ -168,8 +202,10 @@ function App() {
     });
   };
 
+  console.log(bringOutMarble);
   //Function to update player's own location on board
   const selfUpdate = (howFar: number, spaceToUpdate: number) => {
+    console.log("self is being called");
     updateBoard(howFar, turn, spaceToUpdate);
     removeMarbleFromPlayer(turn, spaceToUpdate);
     addMarbleToPlayer(turn, roll + spaceToUpdate);
@@ -182,7 +218,10 @@ function App() {
     removingPlayer: number
   ) => {
     updateBoard(howFar, turn, spaceToUpdate);
+    //remove from other player
     removeMarbleFromPlayer(removingPlayer, spaceToUpdate + roll);
+    //remove from yourself
+    replacePlayerMarble();
     addMarbleToPlayer(turn, roll + spaceToUpdate);
   };
 
@@ -192,6 +231,7 @@ function App() {
   //problem with showing the die after moves
   //can't click older marbles for some reason
   //can't switch between putting one out or in
+  //adding more marbles isn't updating how many marbles they have
   const updateBoardBasedOnMarble = () => {
     const currentPlayer: Player = players[turn];
     const activeMarbles = currentPlayer.marbles.length;
@@ -204,10 +244,12 @@ function App() {
         playerToRemove = 1;
         const playerMarbleToRemove = currentPlayer.start;
         //need to check if this is removing the marble from the other player's array
+        console.log("this is happening");
         removeMarbleFromPlayer(playerToRemove, playerMarbleToRemove);
       }
       //if they already have a marble there then can't do that.
       //function call to update board
+      console.log(currentPlayer.marbles);
       updateBoard(currentPlayer.start, turn, currentPlayer.start);
       addMarbleToPlayer(turn, currentPlayer.start);
       //nextTurn();
@@ -230,14 +272,15 @@ function App() {
             if (emptySpace(currentPlayer.start) === false) {
               removeMarbleFromPlayer(turn, currentPlayer.start);
             }
+            console.log(currentPlayer.marbles);
             addMarbleToPlayer(turn, currentPlayer.start);
             updateMarble(-1);
             bringOut();
           }
           //If a player rolls a 1 or 6 and wants to use roll to move another marble
           else {
-            let currentLocation = currentPlayer.marbles[0];
-            let spacesToMove = currentPlayer.marbles[0] + roll;
+            let currentLocation = marble; //let currentLocation = currentPlayer.marbles[0];
+            let spacesToMove = marble + roll; //let spacesToMove = currentPlayer.marbles[0] + roll;
             if (spacesToMove > 55) {
               currentLocation = currentLocation % 56;
             }
@@ -256,8 +299,8 @@ function App() {
         }
         //if roll is not 1 or 6
         else {
-          let currentLocation = currentPlayer.marbles[0];
-          let spacesToMove = currentPlayer.marbles[0] + roll;
+          let currentLocation = marble; //let currentLocation = currentPlayer.marbles[0];
+          let spacesToMove = marble + roll; //let spacesToMove = currentPlayer.marbles[0] + roll;
           if (spacesToMove > 55) {
             currentLocation = currentLocation % 56;
           }
@@ -272,17 +315,22 @@ function App() {
             console.log("doesn't have marble");
           }
           //then check if the space is empty or is a valid move
-          console.log();
           if (emptySpace((marble + roll) % 56)) {
             const tempSpace = (marble + roll) % 56;
             console.log("this is tempspace");
             console.log(tempSpace);
             selfUpdate(spacesToMove, currentLocation);
+            //issue is when you replace someone elses marble, now you have both of them in your array
           } //if marbles next move is not empty then replace
           else {
+            console.log("this is the one chosen");
             const tempSpace = (marble + roll) % 56;
             const personToRemove = board[tempSpace];
             elseUpdate(spacesToMove, currentLocation, personToRemove);
+
+            setTimeout(() => {
+              console.log(currentPlayer.marbles);
+            }, 1000);
           }
         }
         //nextTurn();
@@ -312,6 +360,7 @@ function App() {
 
   //useEffect that updates board based on clicked marble
   useEffect(() => {
+    console.log(`This is marble: ${marble}`);
     updateBoardBasedOnMarble();
   }, [marble]);
   return (
