@@ -131,12 +131,13 @@ const Board: React.FC<BoardProps> = ({
 
   //do possible moves
   const updateBoard = (players: Players, gameBoard: number[]) => {
-    console.log(players);
     const updatedSpaces = updatePlayerMarbles();
     const possibleMove: number[] = [];
-    for (let i = 0; i < gameBoard.length; i++) {
+    for (let i = 0; i <= 55; i++) {
       if (gameBoard[i] != 0) {
+        console.log(`i: ${i}`);
         const playerToPlace = gameBoard[i];
+        console.log(playerToPlace);
         const playerMarbles = players[playerToPlace].marbles;
         console.log(playerMarbles);
         possibleMove.push(i + 5);
@@ -176,11 +177,9 @@ const Board: React.FC<BoardProps> = ({
   };
 
   useEffect(() => {
-    console.log("updatePlayer is called");
     updatePlayerMarbles();
   }, []);
   useEffect(() => {
-    console.log("updateBoard is called");
     updateBoard(players, board);
   }, [board]);
 
