@@ -30,6 +30,13 @@ const playerMarblesSpaces = [
   [14, 28, 42, 56, 70],
 ];
 
+const playerWinningSpaces = [
+  [202, 187, 172, 157, 142],
+  [22, 37, 52, 67, 82],
+  [106, 107, 108, 109, 110],
+  [120, 119, 118, 117, 116],
+];
+
 //function to initialize spaces array
 function createSpaces() {
   const spaces: React.ReactNode[] = [];
@@ -82,6 +89,7 @@ interface BoardProps {
   move: boolean;
   marbleToUpdate: (marbleId: number) => void;
   takeOutMarble: () => void;
+  updateWinner: (winnerMarble: number) => void;
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -91,6 +99,7 @@ const Board: React.FC<BoardProps> = ({
   move,
   marbleToUpdate,
   takeOutMarble,
+  updateWinner,
 }) => {
   const spacesInit = createSpaces();
   const [spaces, setSpaces] = useState(spacesInit);
@@ -125,20 +134,44 @@ const Board: React.FC<BoardProps> = ({
         );
       });
     });
-    console.log(updatedSpaces);
+    for (let r = 1; r <= numOfPlayers; r++) {
+      for (let n = 0; n < players[r].winners.length; n++) {
+        if (players[r].winners[n] === 1) {
+          updatedSpaces[playerWinningSpaces[r - 1][n]] = (
+            <div
+              className={`space marble`}
+              key={`player${playerWinningSpaces[r - 1][n]}-${12}`}
+              onClick={() => {
+                console.log("this is a winner marble need function");
+                console.log(`This is the index for winner marble to move ${n}`);
+                updateWinner(n);
+                //not completely an idiot still need to have something update rather than this but still lol
+              }}
+            >
+              <Marble marbleColor={players[r].color} />
+            </div>
+          );
+        } else {
+          updatedSpaces[playerWinningSpaces[r - 1][n]] = (
+            <div
+              className={`space grid-item board_hole`}
+              key={`iamanidiot-hole-${playerWinningSpaces[r - 1][n]}`}
+            ></div>
+          );
+        }
+      }
+    }
     return updatedSpaces;
   };
 
   //do possible moves
   const updateBoard = (players: Players, gameBoard: number[]) => {
+    console.log("called updateboard");
     const updatedSpaces = updatePlayerMarbles();
     const possibleMove: number[] = [];
     for (let i = 0; i <= 55; i++) {
       if (gameBoard[i] != 0) {
         const playerToPlace = gameBoard[i];
-        // const playerMarbles = players[playerToPlace].marbles;
-        // console.log("is this where the 5 is coming from");
-        // console.log("hello", playerMarbles);
         possibleMove.push(i + 5);
         let color = "";
         color = players[playerToPlace].color;
@@ -154,8 +187,6 @@ const Board: React.FC<BoardProps> = ({
             <Marble marbleColor={color} />
           </div>
         );
-        //why does it change the layout sometimes
-        //getting rid of the last marble now but the board is messed up
       } else if (possibleMove.includes(i)) {
         updatedSpaces[boardTranslation[i]] = (
           <div
@@ -180,25 +211,27 @@ const Board: React.FC<BoardProps> = ({
   }, []);
   useEffect(() => {
     updateBoard(players, board);
-  }, [board]);
+  }, [board, players]);
 
   return (
-    <div className="board__container">
-      <div className="board">
-        {playerPositions}
-        <div className="inner-board">
-          {move ? (
-            <div className="dice-and-button">
-              <Die getRoll={getRollValue} />
-            </div>
-          ) : (
-            ""
-          )}
+    <>
+      <div className="board__container">
+        <div className="board">
+          {playerPositions}
+          <div className="inner-board">
+            {move ? (
+              <div className="dice-and-button">
+                <Die getRoll={getRollValue} />
+              </div>
+            ) : (
+              ""
+            )}
 
-          <div className="inner-board-container">{spaces}</div>
+            <div className="inner-board-container">{spaces}</div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

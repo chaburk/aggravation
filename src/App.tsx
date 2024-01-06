@@ -13,32 +13,40 @@ function App() {
       name: "Chase",
       color: "red",
       marbles: [],
+      winners: [0, 0, 0, 0, 0],
       start: 0,
       limit: 54,
+      returnFromCenter: 144,
       active: true,
     },
     2: {
       name: "Jordan",
       color: "blue",
       marbles: [],
+      winners: [0, 0, 0, 0, 0],
       start: 28,
       limit: 26,
+      returnFromCenter: 80,
       active: false,
     },
     3: {
       name: "Taylor",
       color: "green",
       marbles: [],
+      winners: [0, 0, 0, 0, 0],
       start: 14,
       limit: 12,
+      returnFromCenter: 140,
       active: false,
     },
     4: {
       name: "Karen",
       color: "purple",
       marbles: [],
+      winners: [0, 0, 0, 0, 0],
       start: 42,
       limit: 40,
+      returnFromCenter: 75,
       active: false,
     },
   };
@@ -105,6 +113,25 @@ function App() {
     // }
   };
 
+  console.log(players[turn].winners);
+
+  const updateWinnerMarble = (winnerMarble: number) => {
+    console.log(`This is winner marble: ${winnerMarble}`);
+    console.log(`This is index to move to: ${winnerMarble + roll}`);
+    console.log(`This is the roll ${roll}`);
+    if (winnerMarble + roll >= 5) {
+      console.log("not a valid move");
+    } else {
+      setPlayers((prevPlayers) => {
+        const newPlayers = { ...prevPlayers };
+        newPlayers[turn].winners[winnerMarble] = 0;
+        newPlayers[turn].winners[winnerMarble + roll] = 1;
+        console.log(newPlayers[turn]);
+        return newPlayers;
+      });
+    }
+  };
+
   //Function to update player's active value
   const updateActive = (tOrF: boolean) => {
     setPlayers((prevPlayers) => {
@@ -114,8 +141,43 @@ function App() {
     });
   };
 
-  const validMove = () => {
+  const addToWinner = (who: number, move: number) => {
+    //logic is almost right but move stuff is a little wrong and need to update something to just update updateboard and the player shit.
+    //everytime the players[turn].winners is updated it will trigger that and update.
+    let empty = true;
+    players[who].winners.forEach((marbles) => {
+      if (marbles === 1) {
+        empty = false;
+      }
+    });
+    if (move > 5) {
+      console.log("move too big");
+    } else {
+      console.log("this is move");
+      console.log(move);
+      console.log(players[who].marbles);
+      //need to remove the old marble
+      setPlayers((prevPlayers) => {
+        const newPlayers = { ...prevPlayers };
+        newPlayers[who].winners[move - 1] = 1;
+        console.log(newPlayers[who]);
+        return newPlayers;
+      });
+    }
+  };
+
+  const validMove = (spacesToCheck: number) => {
     //check each space before it, and if there is no other marbles, then you can move.
+    console.log(
+      `This is inside valid move and we checking from marble ${marble} to ${spacesToCheck}`
+    );
+    for (let check = marble + 1; check <= spacesToCheck; check++) {
+      console.log(board[check]);
+      if (board[check] === turn) {
+        return false;
+      }
+    }
+    return true;
   };
 
   const firstRow = () => {
@@ -137,12 +199,6 @@ function App() {
     if (marbleToRemove > 55) {
       marbleToRemove = marbleToRemove % 56;
     }
-    //how did we get 5?
-    console.log(
-      `We are replacing player ${turn} marble ${players[turn].marbles}`
-    );
-    console.log(`This is the marbleToRemove: ${marbleToRemove}`);
-    console.log(`This is the current marble:  ${marble}`);
     setPlayers((prevPlayers) => {
       const newPlayers = { ...prevPlayers };
       const indexOfMarble =
@@ -162,21 +218,17 @@ function App() {
   };
 
   //Function to add a marble from player's array (Not involved with the board)
-  //getting a random 5
-  //Check if it is overflow or over the limit.
   const addMarbleToPlayer = (current: number, location: number) => {
     if (current > 55) {
       current = current % 56;
     }
     console.log(players[current].limit);
     setPlayers((prevPlayers) => {
-      console.log("adding marble function");
       const newPlayers = { ...prevPlayers };
       if (newPlayers[current].marbles.includes(location)) {
       } else {
         newPlayers[current].marbles.push(location);
       }
-      console.log(newPlayers[current].marbles);
       return newPlayers;
     });
   };
@@ -187,25 +239,51 @@ function App() {
     who: number,
     locationToRemove: number
   ) => {
+    let winner = false;
+    //make special case for this player
+    const tryingMOve = newLocation - locationToRemove;
+    if (players[who].limit === 54) {
+      console.log(players[who].winners);
+      if (newLocation > players[who].limit) {
+        winner = true;
+      }
+    } else if (
+      locationToRemove < players[who].start &&
+      (newLocation > players[who].limit || newLocation >= players[who].start)
+    ) {
+      winner = true;
+    }
     if (newLocation > 55 || locationToRemove > 55) {
       newLocation = newLocation % 56;
       locationToRemove = locationToRemove % 56;
+      console.log(`This is newLocation ${newLocation}`);
     }
-    if (newLocation > players[who].limit) {
-      console.log("Winners grid baby");
+    if (winner) {
+      addToWinner(who, tryingMOve);
+      removeMarbleFromPlayer(who, newLocation);
+      //not perfect
+      //need to check if i am removing and that i don't
+      //remove another marble
+      setBoard((prevBoard) => {
+        const newBoard = [...prevBoard];
+        newBoard[locationToRemove] = 0;
+        newBoard[newLocation] = 0;
+        return newBoard;
+      });
+
+      console.log(board);
+    } else {
+      setBoard((prevBoard) => {
+        const newBoard = [...prevBoard];
+        newBoard[locationToRemove] = 0;
+        newBoard[newLocation] = who;
+        return newBoard;
+      });
     }
-    setBoard((prevBoard) => {
-      const newBoard = [...prevBoard];
-      newBoard[locationToRemove] = 0;
-      newBoard[newLocation] = who;
-      return newBoard;
-    });
   };
 
-  console.log(bringOutMarble);
   //Function to update player's own location on board
   const selfUpdate = (howFar: number, spaceToUpdate: number) => {
-    console.log("self is being called");
     updateBoard(howFar, turn, spaceToUpdate);
     removeMarbleFromPlayer(turn, spaceToUpdate);
     addMarbleToPlayer(turn, roll + spaceToUpdate);
@@ -236,6 +314,7 @@ function App() {
     const currentPlayer: Player = players[turn];
     const activeMarbles = currentPlayer.marbles.length;
     //If current player has no marbles out and rolls a starting number
+
     if (activeMarbles === 0 && (roll === 1 || roll === 6)) {
       const startingSpace = board[currentPlayer.start];
       //If another player's marble is occupying the start square.
@@ -244,7 +323,6 @@ function App() {
         playerToRemove = 1;
         const playerMarbleToRemove = currentPlayer.start;
         //need to check if this is removing the marble from the other player's array
-        console.log("this is happening");
         removeMarbleFromPlayer(playerToRemove, playerMarbleToRemove);
       }
       //if they already have a marble there then can't do that.
@@ -316,14 +394,13 @@ function App() {
           }
           //then check if the space is empty or is a valid move
           if (emptySpace((marble + roll) % 56)) {
+            console.log("we are checking validity");
+            console.log(validMove(spacesToMove));
             const tempSpace = (marble + roll) % 56;
-            console.log("this is tempspace");
-            console.log(tempSpace);
             selfUpdate(spacesToMove, currentLocation);
             //issue is when you replace someone elses marble, now you have both of them in your array
           } //if marbles next move is not empty then replace
           else {
-            console.log("this is the one chosen");
             const tempSpace = (marble + roll) % 56;
             const personToRemove = board[tempSpace];
             elseUpdate(spacesToMove, currentLocation, personToRemove);
@@ -363,6 +440,21 @@ function App() {
     console.log(`This is marble: ${marble}`);
     updateBoardBasedOnMarble();
   }, [marble]);
+
+  useEffect(() => {
+    for (let m = 1; m < numOfPlayers + 1; m++) {
+      const sum = players[m].winners.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        0
+      );
+      if (sum / m === 5) {
+        //console.log("game over");
+        //console.log(`Player ${m} winss`);
+      } else {
+        //console.log("game is still going");
+      }
+    }
+  }, [players]);
   return (
     <>
       <div>
@@ -377,6 +469,7 @@ function App() {
               move={move}
               marbleToUpdate={updateMarble}
               takeOutMarble={bringOut}
+              updateWinner={updateWinnerMarble}
             />
             <button onClick={nextTurn}>Next Turn</button>
             <button onClick={showDie}>Show Die</button>
