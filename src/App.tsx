@@ -16,7 +16,8 @@ function App() {
       winners: [0, 0, 0, 0, 0],
       start: 0,
       limit: 54,
-      returnFromCenter: 144,
+      returnFromCenter: 47,
+      //returnFromCenter: 144,
       active: true,
     },
     2: {
@@ -26,7 +27,8 @@ function App() {
       winners: [0, 0, 0, 0, 0],
       start: 28,
       limit: 26,
-      returnFromCenter: 80,
+      returnFromCenter: 19,
+      //returnFromCenter: 80,
       active: false,
     },
     3: {
@@ -36,7 +38,8 @@ function App() {
       winners: [0, 0, 0, 0, 0],
       start: 14,
       limit: 12,
-      returnFromCenter: 140,
+      returnFromCenter: 5,
+      //returnFromCenter: 140,
       active: false,
     },
     4: {
@@ -46,7 +49,8 @@ function App() {
       winners: [0, 0, 0, 0, 0],
       start: 42,
       limit: 40,
-      returnFromCenter: 75,
+      returnFromCenter: 33,
+      //returnFromCenter: 75,
       active: false,
     },
   };
@@ -113,21 +117,6 @@ function App() {
   const rollRef = useRef(roll);
   rollRef.current = roll;
 
-  const updateWinnerMarble = (winnerMarble: number) => {
-    console.log(`This is the roll ${rollRef.current}`);
-    if (winnerMarble + rollRef.current >= 5) {
-      console.log("not a valid move");
-    } else {
-      setPlayers((prevPlayers) => {
-        const newPlayers = { ...prevPlayers };
-        newPlayers[turn].winners[winnerMarble] = 0;
-        newPlayers[turn].winners[winnerMarble + rollRef.current] = 1;
-        console.log(newPlayers[turn]);
-        return newPlayers;
-      });
-    }
-  };
-
   //Function to update player's active value
   const updateActive = (tOrF: boolean) => {
     setPlayers((prevPlayers) => {
@@ -152,6 +141,21 @@ function App() {
     });
   };
 
+  const moveInWinner = (winnerMarble: number) => {
+    console.log(`This is the roll ${rollRef.current}`);
+    if (winnerMarble + rollRef.current >= 5) {
+      console.log("not a valid move");
+    } else {
+      setPlayers((prevPlayers) => {
+        const newPlayers = { ...prevPlayers };
+        newPlayers[turn].winners[winnerMarble] = 0;
+        newPlayers[turn].winners[winnerMarble + rollRef.current] = 1;
+        console.log(newPlayers[turn]);
+        return newPlayers;
+      });
+    }
+  };
+
   const validMove = (spacesToCheck: number) => {
     //check each space before it, and if there is no other marbles, then you can move.
     for (let check = marble + 1; check <= spacesToCheck; check++) {
@@ -165,7 +169,11 @@ function App() {
 
   const firstRow = () => {
     //function to check if middle logic could apply.
-    //I don't know how to have people put it in the middle yet.
+    return marble <= players[turn].start + 6;
+  };
+
+  const canGoMiddle = () => {
+    return marble + roll === players[turn].start + 6;
   };
 
   const moveOutOfMiddle = () => {
@@ -205,7 +213,6 @@ function App() {
     if (current > 55) {
       current = current % 56;
     }
-    console.log(players[current].limit);
     setPlayers((prevPlayers) => {
       const newPlayers = { ...prevPlayers };
       if (newPlayers[current].marbles.includes(location)) {
@@ -286,10 +293,11 @@ function App() {
 
     if (activeMarbles === 0 && (roll === 1 || roll === 6)) {
       const startingSpace = board[currentPlayer.start];
+      //make sure it is replacing the other persons marble correctly
       //If another player's marble is occupying the start square.
       if (emptySpace(startingSpace) === false && startingSpace !== turn) {
         let playerToRemove = board[currentPlayer.start];
-        playerToRemove = 1;
+        //playerToRemove = 1;
         const playerMarbleToRemove = currentPlayer.start;
         //need to check if this is removing the marble from the other player's array
         removeMarbleFromPlayer(playerToRemove, playerMarbleToRemove);
@@ -309,6 +317,7 @@ function App() {
     //If the player has marbles on the board
     else if (currentPlayer.marbles.length != 0) {
       if (currentPlayer.marbles.length <= 5) {
+        //need to make sure they aren't replacing their own marble
         if (roll === 1 || roll === 6) {
           //If a player rolls a 1 or 6 and wants to add another marble to board
           if (bringOutMarble) {
@@ -326,20 +335,21 @@ function App() {
           else {
             let currentLocation = marble; //let currentLocation = currentPlayer.marbles[0];
             let spacesToMove = marble + roll; //let spacesToMove = currentPlayer.marbles[0] + roll;
+            if (firstRow()) {
+              console.log("first row");
+            }
+            if (canGoMiddle()) {
+              console.log("can go middle");
+            }
             if (spacesToMove > 55) {
               currentLocation = currentLocation % 56;
             }
-            //wait for which marble to move
-            if (currentPlayer.marbles.includes(marble)) {
-              currentLocation = marble;
-              if (spacesToMove > 55) {
-                currentLocation = currentLocation % 56;
-              }
-              spacesToMove = marble + roll;
-            } else {
-              console.log("doesn't have marble");
+            if (validMove(spacesToMove)) {
+              console.log("this is happening");
+              selfUpdate(spacesToMove, currentLocation);
             }
-            selfUpdate(spacesToMove, currentLocation);
+
+            //wait for which marble to move
           }
         }
         //if roll is not 1 or 6
@@ -349,20 +359,15 @@ function App() {
           if (spacesToMove > 55) {
             currentLocation = currentLocation % 56;
           }
-          //wait for which marble to move
-          if (currentPlayer.marbles.includes(marble)) {
-            currentLocation = marble;
-            if (spacesToMove > 55) {
-              currentLocation = currentLocation % 56;
-            }
-            spacesToMove = marble + roll;
-          } else {
-            console.log("doesn't have marble");
+          if (firstRow()) {
+            console.log("first row");
+          }
+          if (canGoMiddle()) {
+            console.log("can go middle");
           }
           //then check if the space is empty or is a valid move
           if (emptySpace((marble + roll) % 56)) {
             if (validMove(spacesToMove)) {
-              const tempSpace = (marble + roll) % 56;
               selfUpdate(spacesToMove, currentLocation);
             } else {
               console.log("can't move in front of own marble");
@@ -371,13 +376,11 @@ function App() {
             //issue is when you replace someone elses marble, now you have both of them in your array
           } //if marbles next move is not empty then replace
           else {
-            const tempSpace = (marble + roll) % 56;
-            const personToRemove = board[tempSpace];
-            elseUpdate(spacesToMove, currentLocation, personToRemove);
-
-            setTimeout(() => {
-              console.log(currentPlayer.marbles);
-            }, 1000);
+            if (validMove(spacesToMove)) {
+              const tempSpace = (marble + roll) % 56;
+              const personToRemove = board[tempSpace];
+              elseUpdate(spacesToMove, currentLocation, personToRemove);
+            }
           }
         }
         //nextTurn();
@@ -424,6 +427,7 @@ function App() {
       );
       if (sum / m === 5) {
         endGame();
+        console.log("game over");
       }
     }
   }, [players]);
@@ -441,7 +445,7 @@ function App() {
               move={move}
               marbleToUpdate={updateMarble}
               takeOutMarble={bringOut}
-              updateWinner={updateWinnerMarble}
+              updateWinner={moveInWinner}
             />
             <button onClick={nextTurn}>Next Turn</button>
             <button onClick={showDie}>Show Die</button>
