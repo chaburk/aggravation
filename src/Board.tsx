@@ -41,7 +41,17 @@ const playerWinningSpaces = [
 function createSpaces() {
   const spaces: React.ReactNode[] = [];
   for (let i = 0; i < 225; i++) {
-    if (spacesToKeep.includes(i)) {
+    if (i === 112) {
+      spaces.push(
+        <div
+          className={`space grid-item board_hole`}
+          key={`hole-${i}`}
+          onClick={() => {
+            console.log("this is the middle marble");
+          }}
+        ></div>
+      );
+    } else if (spacesToKeep.includes(i)) {
       spaces.push(
         <div className={`space grid-item board_hole`} key={`hole-${i}`}></div>
       );
@@ -90,6 +100,9 @@ interface BoardProps {
   marbleToUpdate: (marbleId: number) => void;
   takeOutMarble: () => void;
   updateWinner: (winnerMarble: number) => void;
+  moveMiddle: () => void;
+  changeMiddle: () => void;
+  middleValue: boolean;
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -100,6 +113,9 @@ const Board: React.FC<BoardProps> = ({
   marbleToUpdate,
   takeOutMarble,
   updateWinner,
+  moveMiddle,
+  changeMiddle,
+  middleValue,
 }) => {
   const spacesInit = createSpaces();
   const [spaces, setSpaces] = useState(spacesInit);
@@ -116,7 +132,7 @@ const Board: React.FC<BoardProps> = ({
           return e === 1;
         }
       );
-      console.log(players[playerIndex + 1].marbles);
+
       marbleArray
         .slice(0, 5 - playerAmount - playerWinningMarbles.length)
         .forEach((element) => {
@@ -168,12 +184,48 @@ const Board: React.FC<BoardProps> = ({
         }
       }
     }
+    let playerInTheMiddle = false;
+    for (let r = 1; r <= numOfPlayers; r++) {
+      if (players[r].middle) {
+        playerInTheMiddle = true;
+        updatedSpaces[112] = (
+          <div
+            className={`space marble`}
+            key={`middle-${players[r]}`}
+            onClick={() => {
+              moveMiddle();
+            }}
+          >
+            <Marble marbleColor={players[r].color} />
+          </div>
+        );
+      }
+    }
+    for (let r = 1; r <= numOfPlayers; r++) {
+      if (!playerInTheMiddle) {
+        updatedSpaces[112] = (
+          <div
+            className={`space marble`}
+            key={`middle-${players[r]}`}
+            onClick={() => {
+              //moveMiddle();
+              console.log("this is called");
+              changeMiddle();
+            }}
+          >
+            <div
+              className={`space grid-item board_hole`}
+              key={`iamanidiot-hole-${r}`}
+            ></div>
+          </div>
+        );
+      }
+    }
     return updatedSpaces;
   };
 
   //do possible moves
   const updateBoard = (players: Players, gameBoard: number[]) => {
-    console.log("called updateboard");
     const updatedSpaces = updatePlayerMarbles();
     const possibleMove: number[] = [];
     for (let i = 0; i <= 55; i++) {
@@ -215,9 +267,11 @@ const Board: React.FC<BoardProps> = ({
   useEffect(() => {
     updatePlayerMarbles();
   }, []);
+
+  console.log(middleValue);
   useEffect(() => {
     updateBoard(players, board);
-  }, [board, players]);
+  }, [board, players, middleValue]);
 
   return (
     <>

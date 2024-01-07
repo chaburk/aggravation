@@ -7,6 +7,7 @@ export interface Player {
   limit: number;
   returnFromCenter: number;
   active: boolean;
+  middle: boolean;
 }
 
 export interface Players {
