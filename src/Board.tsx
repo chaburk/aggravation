@@ -111,28 +111,38 @@ const Board: React.FC<BoardProps> = ({
     const updatedSpaces = [...spaces];
     playerMarblesSpaces.forEach((marbleArray, playerIndex) => {
       const playerAmount = players[playerIndex + 1].marbles.length;
-      marbleArray.slice(0, 5 - playerAmount).forEach((element) => {
-        updatedSpaces[element] = (
-          <div
-            className={`space marble`}
-            key={`player${playerIndex}-${element}`}
-            onClick={() => {
-              takeOutMarble();
-              marbleToUpdate(element);
-            }}
-          >
-            <Marble marbleColor={players[playerIndex + 1].color} />
-          </div>
-        );
-      });
-      marbleArray.slice(5 - playerAmount).forEach((element) => {
-        updatedSpaces[element] = (
-          <div
-            className={`space grid-item board_hole`}
-            key={`new-hole-${element}`}
-          ></div>
-        );
-      });
+      const playerWinningMarbles = players[playerIndex + 1].winners.filter(
+        (e) => {
+          return e === 1;
+        }
+      );
+      console.log(players[playerIndex + 1].marbles);
+      marbleArray
+        .slice(0, 5 - playerAmount - playerWinningMarbles.length)
+        .forEach((element) => {
+          updatedSpaces[element] = (
+            <div
+              className={`space marble`}
+              key={`player${playerIndex}-${element}`}
+              onClick={() => {
+                takeOutMarble();
+                marbleToUpdate(element);
+              }}
+            >
+              <Marble marbleColor={players[playerIndex + 1].color} />
+            </div>
+          );
+        });
+      marbleArray
+        .slice(5 - playerAmount - playerWinningMarbles.length)
+        .forEach((element) => {
+          updatedSpaces[element] = (
+            <div
+              className={`space grid-item board_hole`}
+              key={`new-hole-${element}`}
+            ></div>
+          );
+        });
     });
     for (let r = 1; r <= numOfPlayers; r++) {
       for (let n = 0; n < players[r].winners.length; n++) {
@@ -142,10 +152,7 @@ const Board: React.FC<BoardProps> = ({
               className={`space marble`}
               key={`player${playerWinningSpaces[r - 1][n]}-${12}`}
               onClick={() => {
-                console.log("this is a winner marble need function");
-                console.log(`This is the index for winner marble to move ${n}`);
                 updateWinner(n);
-                //not completely an idiot still need to have something update rather than this but still lol
               }}
             >
               <Marble marbleColor={players[r].color} />
@@ -180,7 +187,6 @@ const Board: React.FC<BoardProps> = ({
             className={`space marble`}
             key={`${color}-${i}`}
             onClick={() => {
-              console.log(`marble ${i} clicked`);
               marbleToUpdate(i);
             }}
           >
